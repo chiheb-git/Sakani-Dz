@@ -1,0 +1,1393 @@
+﻿===== FICHIER : artifacts\mobile\src\features\properties\PropertiesScreen.tsx =====
+import { useState, useMemo } from "react";
+import {
+  View,
+  Text,
+  FlatList,
+  StyleSheet,
+  ActivityIndicator,
+  RefreshControl,
+  TouchableOpacity,
+  Modal,
+  SafeAreaView,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import { colors, spacing, radius, typography, shadow } from "../../shared/theme/theme";
+import { useListPropertiesQuery } from "../../core/api/apiSlice";
+import PropertyCard from "./components/PropertyCard";
+import type { Property } from "@workspace/api-zod";
+
+const WILAYAS = [
+  { code: "01", name: "Adrar" },
+  { code: "02", name: "Chlef" },
+  { code: "03", name: "Laghouat" },
+  { code: "04", name: "Oum El Bouaghi" },
+  { code: "05", name: "Batna" },
+  { code: "06", name: "Béjaïa" },
+  { code: "07", name: "Biskra" },
+  { code: "08", name: "Béchar" },
+  { code: "09", name: "Blida" },
+  { code: "10", name: "Bouira" },
+  { code: "11", name: "Tamanrasset" },
+  { code: "12", name: "Tébessa" },
+  { code: "13", name: "Tlemcen" },
+  { code: "14", name: "Tiaret" },
+  { code: "15", name: "Tizi Ouzou" },
+  { code: "16", name: "Alger" },
+  { code: "17", name: "Djelfa" },
+  { code: "18", name: "Jijel" },
+  { code: "19", name: "Sétif" },
+  { code: "20", name: "Saïda" },
+  { code: "21", name: "Skikda" },
+  { code: "22", name: "Sidi Bel Abbès" },
+  { code: "23", name: "Annaba" },
+  { code: "24", name: "Guelma" },
+  { code: "25", name: "Constantine" },
+  { code: "26", name: "Médéa" },
+  { code: "27", name: "Mostaganem" },
+  { code: "28", name: "M'Sila" },
+  { code: "29", name: "Mascara" },
+  { code: "30", name: "Ouargla" },
+  { code: "31", name: "Oran" },
+  { code: "32", name: "El Bayadh" },
+  { code: "33", name: "Illizi" },
+  { code: "34", name: "Bordj Bou Arréridj" },
+  { code: "35", name: "Boumerdès" },
+  { code: "36", name: "El Tarf" },
+  { code: "37", name: "Tindouf" },
+  { code: "38", name: "Tissemsilt" },
+  { code: "39", name: "El Oued" },
+  { code: "40", name: "Khenchela" },
+  { code: "41", name: "Souk Ahras" },
+  { code: "42", name: "Tipaza" },
+  { code: "43", name: "Mila" },
+  { code: "44", name: "Aïn Defla" },
+  { code: "45", name: "Naâma" },
+  { code: "46", name: "Aïn Témouchent" },
+  { code: "47", name: "Ghardaïa" },
+  { code: "48", name: "Relizane" },
+  { code: "49", name: "Timimoun" },
+  { code: "50", name: "Bordj Badji Mokhtar" },
+  { code: "51", name: "Ouled Djellal" },
+  { code: "52", name: "Béni Abbès" },
+  { code: "53", name: "In Salah" },
+  { code: "54", name: "In Guezzam" },
+  { code: "55", name: "Touggourt" },
+  { code: "56", name: "Djanet" },
+  { code: "57", name: "El M'Ghair" },
+  { code: "58", name: "El Meniaa" },
+];
+
+export default function PropertiesScreen() {
+  const navigation = useNavigation<any>();
+  const [selectedWilaya, setSelectedWilaya] = useState<string | null>(null);
+  const [selectedType, setSelectedType] = useState<"all" | "apartment" | "villa">("all");
+  const [wilayaModalVisible, setWilayaModalVisible] = useState(false);
+
+  const queryArgs = useMemo(
+    () => ({
+      wilaya: selectedWilaya ?? undefined,
+      type: selectedType === "all" ? undefined : selectedType,
+      limit: 20,
+    }),
+    [selectedWilaya, selectedType],
+  );
+
+  const { data, isLoading, isFetching, refetch } = useListPropertiesQuery(queryArgs);
+
+  const properties: Property[] = data?.data ?? [];
+
+  const tabs: { key: "all" | "apartment" | "villa"; label: string; icon: keyof typeof Ionicons.glyphMap }[] = [
+    { key: "all", label: "Tous", icon: "grid" },
+    { key: "apartment", label: "Appartements", icon: "home" },
+    { key: "villa", label: "Villas", icon: "business" },
+  ];
+
+  const quickWilayas = WILAYAS.slice(0, 8);
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Sakani Dz</Text>
+        <Text style={styles.headerSubtitle}>Trouvez votre logement idéal en Algérie</Text>
+      </View>
+
+      <View style={styles.typeTabs}>
+        {tabs.map((tab) => {
+          const active = selectedType === tab.key;
+          return (
+            <TouchableOpacity
+              key={tab.key}
+              style={[styles.typeTab, active && styles.typeTabActive]}
+              onPress={() => setSelectedType(tab.key)}
+              activeOpacity={0.8}
+            >
+              <Ionicons name={tab.icon} size={16} color={active ? "#fff" : colors.textSecondary} />
+              <Text style={[styles.typeTabText, active && styles.typeTabTextActive]}>{tab.label}</Text>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
+
+      <View style={styles.wilayaRow}>
+        <TouchableOpacity
+          style={styles.wilayaAllButton}
+          onPress={() => setWilayaModalVisible(true)}
+          activeOpacity={0.8}
+        >
+          <Ionicons name="map" size={18} color={colors.primary} />
+        </TouchableOpacity>
+
+        <FlatList
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          data={[{ code: "00", name: "Toutes" }, ...quickWilayas]}
+          keyExtractor={(item) => item.code}
+          style={styles.wilayaList}
+          contentContainerStyle={{ gap: spacing.sm }}
+          renderItem={({ item }) => {
+            const isAll = item.code === "00";
+            const active = isAll ? selectedWilaya === null : selectedWilaya === item.name;
+            return (
+              <TouchableOpacity
+                style={[styles.wilayaChip, active && styles.wilayaChipActive]}
+                onPress={() => setSelectedWilaya(isAll ? null : item.name)}
+                activeOpacity={0.8}
+              >
+                <Text style={[styles.wilayaChipText, active && styles.wilayaChipTextActive]}>
+                  {isAll ? "Toutes" : `${item.code} - ${item.name}`}
+                </Text>
+              </TouchableOpacity>
+            );
+          }}
+        />
+      </View>
+
+      {isLoading ? (
+        <View style={styles.centerFill}>
+          <ActivityIndicator size="large" color={colors.primary} />
+        </View>
+      ) : properties.length === 0 ? (
+        <View style={styles.centerFill}>
+          <Ionicons name="search" size={40} color={colors.textMuted} />
+          <Text style={styles.emptyText}>Aucun bien trouvé pour ces critères</Text>
+        </View>
+      ) : (
+        <FlatList
+          data={properties}
+          keyExtractor={(item) => String(item.id)}
+          contentContainerStyle={{ paddingTop: spacing.md, paddingBottom: spacing.xl }}
+          refreshControl={
+            <RefreshControl refreshing={isFetching && !isLoading} onRefresh={refetch} tintColor={colors.primary} />
+          }
+          renderItem={({ item }) => (
+            <PropertyCard
+              property={item}
+              onPress={() => navigation.navigate("PropertyDetail", { propertyId: item.id })}
+            />
+          )}
+        />
+      )}
+
+      <Modal
+        visible={wilayaModalVisible}
+        animationType="slide"
+        onRequestClose={() => setWilayaModalVisible(false)}
+      >
+        <SafeAreaView style={styles.modalContainer}>
+          <View style={styles.modalHeader}>
+            <Text style={styles.modalTitle}>Choisir une wilaya</Text>
+            <TouchableOpacity onPress={() => setWilayaModalVisible(false)}>
+              <Ionicons name="close" size={26} color={colors.textPrimary} />
+            </TouchableOpacity>
+          </View>
+          <FlatList
+            data={WILAYAS}
+            keyExtractor={(item) => item.code}
+            numColumns={2}
+            columnWrapperStyle={{ gap: spacing.sm }}
+            contentContainerStyle={{ padding: spacing.md, gap: spacing.sm }}
+            ListHeaderComponent={
+              <TouchableOpacity
+                style={[styles.modalRow, selectedWilaya === null && styles.modalRowActive]}
+                onPress={() => {
+                  setSelectedWilaya(null);
+                  setWilayaModalVisible(false);
+                }}
+              >
+                <Text
+                  style={[
+                    styles.modalRowText,
+                    selectedWilaya === null && styles.modalRowTextActive,
+                  ]}
+                >
+                  Toutes les wilayas
+                </Text>
+              </TouchableOpacity>
+            }
+            renderItem={({ item }) => {
+              const active = selectedWilaya === item.name;
+              return (
+                <TouchableOpacity
+                  style={[styles.modalRow, styles.modalRowHalf, active && styles.modalRowActive]}
+                  onPress={() => {
+                    setSelectedWilaya(item.name);
+                    setWilayaModalVisible(false);
+                  }}
+                >
+                  <Text style={[styles.modalRowText, active && styles.modalRowTextActive]}>
+                    {item.code} - {item.name}
+                  </Text>
+                </TouchableOpacity>
+              );
+            }}
+          />
+        </SafeAreaView>
+      </Modal>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.background,
+  },
+  header: {
+    backgroundColor: colors.primary,
+    paddingTop: spacing.xxl,
+    paddingBottom: spacing.lg,
+    paddingHorizontal: spacing.lg,
+    borderBottomLeftRadius: radius.lg,
+    borderBottomRightRadius: radius.lg,
+  },
+  headerTitle: {
+    ...typography.h1,
+    color: "#fff",
+  },
+  headerSubtitle: {
+    ...typography.body,
+    color: "rgba(255,255,255,0.75)",
+    marginTop: 4,
+  },
+  typeTabs: {
+    flexDirection: "row",
+    paddingHorizontal: spacing.md,
+    marginTop: spacing.md,
+    gap: spacing.sm,
+  },
+  typeTab: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+    paddingVertical: spacing.sm,
+    borderRadius: radius.sm,
+    backgroundColor: colors.surface,
+    ...shadow.card,
+  },
+  typeTabActive: {
+    backgroundColor: colors.primary,
+  },
+  typeTabText: {
+    ...typography.caption,
+    fontWeight: "600",
+    color: colors.textSecondary,
+  },
+  typeTabTextActive: {
+    color: "#fff",
+  },
+  wilayaRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: spacing.md,
+    paddingLeft: spacing.md,
+  },
+  wilayaAllButton: {
+    width: 36,
+    height: 36,
+    borderRadius: radius.full,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.accent,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: spacing.sm,
+  },
+  wilayaList: {
+    flexGrow: 0,
+    paddingRight: spacing.md,
+  },
+  wilayaChip: {
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderRadius: radius.full,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  wilayaChipActive: {
+    backgroundColor: colors.accent,
+    borderColor: colors.accent,
+  },
+  wilayaChipText: {
+    ...typography.caption,
+    fontWeight: "600",
+    color: colors.textSecondary,
+  },
+  wilayaChipTextActive: {
+    color: "#fff",
+  },
+  centerFill: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: spacing.sm,
+  },
+  emptyText: {
+    ...typography.body,
+    color: colors.textMuted,
+  },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: colors.background,
+  },
+  modalHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+    backgroundColor: colors.surface,
+  },
+  modalTitle: {
+    ...typography.h3,
+    color: colors.textPrimary,
+  },
+  modalRow: {
+    backgroundColor: colors.surface,
+    borderRadius: radius.sm,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  modalRowHalf: {
+    flex: 1,
+  },
+  modalRowActive: {
+    backgroundColor: colors.accent,
+    borderColor: colors.accent,
+  },
+  modalRowText: {
+    ...typography.caption,
+    fontWeight: "600",
+    color: colors.textPrimary,
+  },
+  modalRowTextActive: {
+    color: "#fff",
+  },
+});
+
+===== FICHIER : artifacts\mobile\src\features\properties\components\PropertyCard.tsx =====
+import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { colors, spacing, radius, typography, shadow } from "../../../shared/theme/theme";
+import type { Property } from "@workspace/api-zod";
+
+function formatPrice(price: number): string {
+  return `${new Intl.NumberFormat("fr-FR").format(price)} DA`;
+}
+
+function typeLabel(property: Property): string {
+  if (property.type === "apartment" && property.apartmentType) return property.apartmentType;
+  if (property.type === "villa") return "Villa";
+  return property.type;
+}
+
+export default function PropertyCard({
+  property,
+  onPress,
+}: {
+  property: Property;
+  onPress: () => void;
+}) {
+  const photo = property.photos?.[0];
+
+  return (
+    <TouchableOpacity style={styles.card} activeOpacity={0.9} onPress={onPress}>
+      <View style={styles.imageWrapper}>
+        {photo ? (
+          <Image source={{ uri: photo }} style={styles.image} />
+        ) : (
+          <View style={[styles.image, styles.imagePlaceholder]}>
+            <Ionicons name="home" size={36} color={colors.textMuted} />
+          </View>
+        )}
+        {property.isFeatured ? (
+          <View style={styles.featuredBadge}>
+            <Ionicons name="star" size={12} color="#fff" />
+            <Text style={styles.featuredText}>En vedette</Text>
+          </View>
+        ) : null}
+        <View style={styles.typeBadge}>
+          <Text style={styles.typeText}>{typeLabel(property)}</Text>
+        </View>
+      </View>
+
+      <View style={styles.body}>
+        <View style={styles.rowBetween}>
+          <View style={styles.wilayaRow}>
+            <Ionicons name="location" size={14} color={colors.textSecondary} />
+            <Text style={styles.wilaya}>{property.wilaya}</Text>
+          </View>
+          <Text style={styles.price}>{formatPrice(property.price)}</Text>
+        </View>
+
+        {property.description ? (
+          <Text style={styles.description} numberOfLines={2}>
+            {property.description}
+          </Text>
+        ) : null}
+
+        <View style={styles.footerRow}>
+          <View style={styles.statusPill(property.status === "available")}>
+            <Text style={styles.statusText(property.status === "available")}>
+              {property.status === "available" ? "Disponible" : "Loué"}
+            </Text>
+          </View>
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
+}
+
+const styles = {
+  card: {
+    backgroundColor: colors.surface,
+    borderRadius: radius.md,
+    marginHorizontal: spacing.md,
+    marginBottom: spacing.md,
+    overflow: "hidden" as const,
+    ...shadow.card,
+  },
+  imageWrapper: {
+    width: "100%" as const,
+    height: 180,
+    position: "relative" as const,
+    backgroundColor: colors.border,
+  },
+  image: {
+    width: "100%" as const,
+    height: "100%" as const,
+  },
+  imagePlaceholder: {
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
+  },
+  featuredBadge: {
+    position: "absolute" as const,
+    top: spacing.sm,
+    left: spacing.sm,
+    backgroundColor: colors.accent,
+    borderRadius: radius.full,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 4,
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    gap: 4,
+  },
+  featuredText: {
+    color: "#fff",
+    fontSize: 11,
+    fontWeight: "700" as const,
+  },
+  typeBadge: {
+    position: "absolute" as const,
+    top: spacing.sm,
+    right: spacing.sm,
+    backgroundColor: colors.overlay,
+    borderRadius: radius.full,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 4,
+  },
+  typeText: {
+    color: "#fff",
+    fontSize: 11,
+    fontWeight: "700" as const,
+  },
+  body: {
+    padding: spacing.md,
+  },
+  rowBetween: {
+    flexDirection: "row" as const,
+    justifyContent: "space-between" as const,
+    alignItems: "center" as const,
+    marginBottom: spacing.xs,
+  },
+  wilayaRow: {
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    gap: 4,
+  },
+  wilaya: {
+    ...typography.bodyMedium,
+    color: colors.textPrimary,
+  },
+  price: {
+    ...typography.price,
+    color: colors.primary,
+  },
+  description: {
+    ...typography.caption,
+    color: colors.textSecondary,
+    marginBottom: spacing.sm,
+  },
+  footerRow: {
+    flexDirection: "row" as const,
+  },
+  statusPill: (available: boolean) => ({
+    borderRadius: radius.full,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 3,
+    backgroundColor: available ? "rgba(22,163,74,0.1)" : "rgba(220,38,38,0.1)",
+  }),
+  statusText: (available: boolean) => ({
+    fontSize: 12,
+    fontWeight: "600" as const,
+    color: available ? colors.success : colors.danger,
+  }),
+};
+
+===== FICHIER : artifacts\mobile\src\features\properties\PropertyDetailScreen.tsx =====
+import { useRoute, useNavigation } from "@react-navigation/native";
+import {
+  View,
+  Text,
+  ScrollView,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  Linking,
+  ActivityIndicator,
+  Dimensions,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { colors, spacing, radius, typography, shadow } from "../../shared/theme/theme";
+import { useGetPropertyQuery } from "../../core/api/apiSlice";
+
+function formatPrice(price: number): string {
+  return `${new Intl.NumberFormat("fr-FR").format(price)} DA`;
+}
+
+export default function PropertyDetailScreen() {
+  const navigation = useNavigation();
+  const route = useRoute<any>();
+  const { propertyId } = route.params;
+
+  const { data: property, isLoading } = useGetPropertyQuery(propertyId);
+
+  if (isLoading || !property) {
+    return (
+      <View style={styles.centerFill}>
+        <ActivityIndicator size="large" color={colors.primary} />
+      </View>
+    );
+  }
+
+  const vendor = property.vendor;
+  const photo = property.photos?.[0];
+  const screenWidth = Dimensions.get("window").width;
+
+  const handleCall = () => {
+    if (vendor?.phone) Linking.openURL(`tel:${vendor.phone}`);
+  };
+
+  const handleWhatsApp = () => {
+    if (vendor?.phone) {
+      const cleaned = vendor.phone.replace(/[^0-9]/g, "");
+      Linking.openURL(`https://wa.me/${cleaned}`);
+    }
+  };
+
+  const handleMap = () => {
+    if (property.latitude != null && property.longitude != null) {
+      const url = `https://www.google.com/maps/search/?api=1&query=${property.latitude},${property.longitude}`;
+      Linking.openURL(url);
+    }
+  };
+
+  const typeLabel =
+    property.type === "apartment" && property.apartmentType ? property.apartmentType : "Villa";
+
+  return (
+    <View style={styles.container}>
+      <ScrollView bounces={false}>
+        <View style={styles.imageWrapper}>
+          {photo ? (
+            <Image source={{ uri: photo }} style={[styles.image, { width: screenWidth }]} />
+          ) : (
+            <View style={[styles.image, styles.imagePlaceholder, { width: screenWidth }]}>
+              <Ionicons name="home" size={48} color={colors.textMuted} />
+            </View>
+          )}
+          <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+            <Ionicons name="arrow-back" size={22} color="#fff" />
+          </TouchableOpacity>
+          <View style={styles.typeBadge}>
+            <Text style={styles.typeBadgeText}>{typeLabel}</Text>
+          </View>
+        </View>
+
+        <View style={styles.content}>
+          <View style={styles.rowBetween}>
+            <View style={styles.wilayaRow}>
+              <Ionicons name="location" size={16} color={colors.textSecondary} />
+              <Text style={styles.wilaya}>{property.wilaya}</Text>
+            </View>
+            <Text style={styles.price}>{formatPrice(property.price)}</Text>
+          </View>
+
+          <View style={[styles.statusPill, property.status !== "available" && styles.statusPillRented]}>
+            <Text style={styles.statusText}>
+              {property.status === "available" ? "Disponible" : "Loué"}
+            </Text>
+          </View>
+
+          {property.description ? (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Description</Text>
+              <Text style={styles.description}>{property.description}</Text>
+            </View>
+          ) : null}
+
+          {property.equipment && property.equipment.length > 0 ? (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Équipements</Text>
+              <View style={styles.equipmentGrid}>
+                {property.equipment.map((item, index) => (
+                  <View key={index} style={styles.equipmentChip}>
+                    <Ionicons name="checkmark-circle" size={14} color={colors.success} />
+                    <Text style={styles.equipmentText}>{item}</Text>
+                  </View>
+                ))}
+              </View>
+            </View>
+          ) : null}
+
+          {property.latitude != null && property.longitude != null ? (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Localisation</Text>
+              <TouchableOpacity style={styles.mapCard} onPress={handleMap} activeOpacity={0.85}>
+                <Ionicons name="map" size={28} color={colors.primary} />
+                <Text style={styles.mapCardText}>Voir sur la carte</Text>
+                <Ionicons name="open-outline" size={18} color={colors.textSecondary} />
+              </TouchableOpacity>
+            </View>
+          ) : null}
+
+          {vendor ? (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Vendeur</Text>
+              <View style={styles.vendorCard}>
+                <View style={styles.vendorAvatar}>
+                  <Ionicons name="person" size={22} color={colors.primary} />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.vendorName}>
+                    {vendor.firstName} {vendor.lastName}
+                  </Text>
+                  {vendor.isVerified ? (
+                    <View style={styles.verifiedRow}>
+                      <Ionicons name="checkmark-circle" size={13} color={colors.success} />
+                      <Text style={styles.verifiedText}>Vendeur vérifié</Text>
+                    </View>
+                  ) : null}
+                </View>
+              </View>
+            </View>
+          ) : null}
+        </View>
+      </ScrollView>
+
+      {vendor ? (
+        <View style={styles.footer}>
+          <TouchableOpacity style={[styles.footerButton, styles.callButton]} onPress={handleCall}>
+            <Ionicons name="call" size={20} color="#fff" />
+            <Text style={styles.footerButtonText}>Appeler</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.footerButton, styles.whatsappButton]} onPress={handleWhatsApp}>
+            <Ionicons name="logo-whatsapp" size={20} color="#fff" />
+            <Text style={styles.footerButtonText}>WhatsApp</Text>
+          </TouchableOpacity>
+        </View>
+      ) : null}
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.background,
+  },
+  centerFill: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: colors.background,
+  },
+  imageWrapper: {
+    height: 280,
+    backgroundColor: colors.border,
+    position: "relative",
+  },
+  image: {
+    height: "100%",
+  },
+  imagePlaceholder: {
+    height: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  backButton: {
+    position: "absolute",
+    top: spacing.xxl,
+    left: spacing.md,
+    width: 40,
+    height: 40,
+    borderRadius: radius.full,
+    backgroundColor: colors.overlay,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  typeBadge: {
+    position: "absolute",
+    bottom: spacing.md,
+    right: spacing.md,
+    backgroundColor: colors.accent,
+    borderRadius: radius.full,
+    paddingHorizontal: spacing.md,
+    paddingVertical: 6,
+  },
+  typeBadgeText: {
+    color: "#fff",
+    fontWeight: "700",
+    fontSize: 13,
+  },
+  content: {
+    padding: spacing.lg,
+    paddingBottom: 120,
+  },
+  rowBetween: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  wilayaRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
+  wilaya: {
+    ...typography.h3,
+    color: colors.textPrimary,
+  },
+  price: {
+    ...typography.h2,
+    color: colors.primary,
+  },
+  statusPill: {
+    alignSelf: "flex-start",
+    marginTop: spacing.sm,
+    backgroundColor: "rgba(22,163,74,0.1)",
+    borderRadius: radius.full,
+    paddingHorizontal: spacing.md,
+    paddingVertical: 4,
+  },
+  statusPillRented: {
+    backgroundColor: "rgba(220,38,38,0.1)",
+  },
+  statusText: {
+    fontSize: 12,
+    fontWeight: "700",
+    color: colors.success,
+  },
+  section: {
+    marginTop: spacing.lg,
+  },
+  sectionTitle: {
+    ...typography.h3,
+    color: colors.textPrimary,
+    marginBottom: spacing.sm,
+  },
+  description: {
+    ...typography.body,
+    color: colors.textSecondary,
+    lineHeight: 22,
+  },
+  equipmentGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: spacing.sm,
+  },
+  equipmentChip: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radius.full,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 6,
+  },
+  equipmentText: {
+    ...typography.caption,
+    color: colors.textPrimary,
+  },
+  mapCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.sm,
+    backgroundColor: colors.surface,
+    borderRadius: radius.md,
+    padding: spacing.md,
+    ...shadow.card,
+  },
+  mapCardText: {
+    ...typography.bodyMedium,
+    color: colors.textPrimary,
+    flex: 1,
+  },
+  vendorCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.md,
+    backgroundColor: colors.surface,
+    borderRadius: radius.md,
+    padding: spacing.md,
+    ...shadow.card,
+  },
+  vendorAvatar: {
+    width: 44,
+    height: 44,
+    borderRadius: radius.full,
+    backgroundColor: "rgba(15,42,67,0.08)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  vendorName: {
+    ...typography.bodyMedium,
+    color: colors.textPrimary,
+  },
+  verifiedRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    marginTop: 2,
+  },
+  verifiedText: {
+    ...typography.caption,
+    color: colors.success,
+  },
+  footer: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    flexDirection: "row",
+    gap: spacing.sm,
+    padding: spacing.md,
+    backgroundColor: colors.surface,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
+  },
+  footerButton: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: spacing.sm,
+    paddingVertical: spacing.sm + 2,
+    borderRadius: radius.sm,
+  },
+  callButton: {
+    backgroundColor: colors.primary,
+  },
+  whatsappButton: {
+    backgroundColor: "#25D366",
+  },
+  footerButtonText: {
+    color: "#fff",
+    fontWeight: "700",
+    fontSize: 15,
+  },
+});
+
+===== FICHIER : artifacts\mobile\src\shared\theme\theme.ts =====
+export const colors = {
+  primary: "#0F2A43",
+  primaryLight: "#1E4570",
+  accent: "#C9A24B",
+  accentLight: "#E0C687",
+  background: "#F7F8FA",
+  surface: "#FFFFFF",
+  textPrimary: "#111827",
+  textSecondary: "#6B7280",
+  textMuted: "#9CA3AF",
+  border: "#E5E7EB",
+  success: "#16A34A",
+  danger: "#DC2626",
+  overlay: "rgba(15, 42, 67, 0.55)",
+};
+
+export const spacing = {
+  xs: 4,
+  sm: 8,
+  md: 16,
+  lg: 24,
+  xl: 32,
+  xxl: 48,
+};
+
+export const radius = {
+  sm: 8,
+  md: 14,
+  lg: 20,
+  full: 999,
+};
+
+export const typography = {
+  h1: { fontSize: 28, fontWeight: "700" as const, letterSpacing: -0.5 },
+  h2: { fontSize: 22, fontWeight: "700" as const, letterSpacing: -0.3 },
+  h3: { fontSize: 18, fontWeight: "600" as const },
+  body: { fontSize: 15, fontWeight: "400" as const },
+  bodyMedium: { fontSize: 15, fontWeight: "600" as const },
+  caption: { fontSize: 13, fontWeight: "400" as const },
+  price: { fontSize: 17, fontWeight: "700" as const },
+};
+
+export const shadow = {
+  card: {
+    shadowColor: "#0F2A43",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 4,
+  },
+  floating: {
+    shadowColor: "#0F2A43",
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.15,
+    shadowRadius: 20,
+    elevation: 8,
+  },
+};
+
+===== FICHIER : artifacts\api-server\src\routes\sites.ts =====
+import { Router, type IRouter } from "express";
+import { eq, and, desc, sql } from "drizzle-orm";
+import { db } from "@workspace/db";
+import { sitesTable, vendorsTable, propertiesTable } from "@workspace/db";
+import {
+  ListSitesQueryParams,
+  CreateSiteBody,
+  GetSiteParams,
+  UpdateSiteParams,
+  UpdateSiteBody,
+  DeleteSiteParams,
+  ListSitePropertiesParams,
+} from "@workspace/api-zod";
+import { authenticate, requireRole } from "../middlewares/authenticate";
+
+const router: IRouter = Router();
+
+function formatSite(s: typeof sitesTable.$inferSelect, v?: typeof vendorsTable.$inferSelect | null, count = 0) {
+  return {
+    id: s.id,
+    vendorId: s.vendorId,
+    name: s.name,
+    description: s.description,
+    latitude: s.latitude ? Number(s.latitude) : null,
+    longitude: s.longitude ? Number(s.longitude) : null,
+    photos: s.photos ?? [],
+    wilaya: s.wilaya,
+    propertyCount: count,
+    createdAt: s.createdAt,
+    vendor: v
+      ? { id: v.id, firstName: v.firstName, lastName: v.lastName, phone: v.phone, email: v.email, isVerified: v.isVerified }
+      : null,
+  };
+}
+
+// GET /sites
+router.get("/sites", async (req, res): Promise<void> => {
+  const params = ListSitesQueryParams.safeParse(req.query);
+  if (!params.success) {
+    res.status(400).json({ error: params.error.message });
+    return;
+  }
+  const { wilaya, page = 1, limit = 20 } = params.data;
+  const where = wilaya ? eq(sitesTable.wilaya, wilaya) : undefined;
+  const offset = (page - 1) * limit;
+
+  const rows = await db
+    .select({ site: sitesTable, vendor: vendorsTable })
+    .from(sitesTable)
+    .leftJoin(vendorsTable, eq(sitesTable.vendorId, vendorsTable.id))
+    .where(where)
+    .orderBy(desc(sitesTable.createdAt))
+    .limit(limit)
+    .offset(offset);
+
+  const [countRow] = await db
+    .select({ count: sql<number>`count(*)::int` })
+    .from(sitesTable)
+    .where(where);
+
+  const total = countRow?.count ?? 0;
+
+  // Get property counts per site
+  const siteIds = rows.map((r) => r.site.id);
+  const propCounts: Record<number, number> = {};
+  if (siteIds.length > 0) {
+    const counts = await db
+      .select({ siteId: propertiesTable.siteId, count: sql<number>`count(*)::int` })
+      .from(propertiesTable)
+      .where(sql`${propertiesTable.siteId} = ANY(${sql.raw(`ARRAY[${siteIds.join(",")}]::int[]`)})`)
+      .groupBy(propertiesTable.siteId);
+    counts.forEach((c) => { if (c.siteId) propCounts[c.siteId] = c.count; });
+  }
+
+  res.json({
+    data: rows.map(({ site, vendor }) => formatSite(site, vendor, propCounts[site.id] ?? 0)),
+    pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
+  });
+});
+
+// POST /sites
+router.post(
+  "/sites",
+  authenticate,
+  requireRole("vendor", "admin"),
+  async (req, res): Promise<void> => {
+    const parsed = CreateSiteBody.safeParse(req.body);
+    if (!parsed.success) {
+      res.status(400).json({ error: parsed.error.message });
+      return;
+    }
+    const vendorId = req.user!.role === "vendor" ? req.user!.userId : (req.body as any).vendorId ?? req.user!.userId;
+    const [site] = await db
+      .insert(sitesTable)
+      .values({
+        vendorId,
+        name: parsed.data.name,
+        description: parsed.data.description,
+        latitude: parsed.data.latitude != null ? String(parsed.data.latitude) : null,
+        longitude: parsed.data.longitude != null ? String(parsed.data.longitude) : null,
+        photos: parsed.data.photos ?? [],
+        wilaya: parsed.data.wilaya,
+      })
+      .returning();
+    const [vendor] = await db.select().from(vendorsTable).where(eq(vendorsTable.id, site.vendorId));
+    res.status(201).json(formatSite(site, vendor, 0));
+  },
+);
+
+// GET /sites/:id
+router.get("/sites/:id", async (req, res): Promise<void> => {
+  const params = GetSiteParams.safeParse(req.params);
+  if (!params.success) {
+    res.status(400).json({ error: params.error.message });
+    return;
+  }
+  const [row] = await db
+    .select({ site: sitesTable, vendor: vendorsTable })
+    .from(sitesTable)
+    .leftJoin(vendorsTable, eq(sitesTable.vendorId, vendorsTable.id))
+    .where(eq(sitesTable.id, params.data.id));
+  if (!row) {
+    res.status(404).json({ error: "Site not found" });
+    return;
+  }
+  const [countRow] = await db
+    .select({ count: sql<number>`count(*)::int` })
+    .from(propertiesTable)
+    .where(eq(propertiesTable.siteId, params.data.id));
+  res.json(formatSite(row.site, row.vendor, countRow?.count ?? 0));
+});
+
+// PATCH /sites/:id
+router.patch(
+  "/sites/:id",
+  authenticate,
+  requireRole("vendor", "admin"),
+  async (req, res): Promise<void> => {
+    const params = UpdateSiteParams.safeParse(req.params);
+    if (!params.success) {
+      res.status(400).json({ error: params.error.message });
+      return;
+    }
+    const body = UpdateSiteBody.safeParse(req.body);
+    if (!body.success) {
+      res.status(400).json({ error: body.error.message });
+      return;
+    }
+    const updates: Record<string, unknown> = {};
+    const d = body.data as Record<string, unknown>;
+    if (d.name != null) updates.name = d.name;
+    if (d.description != null) updates.description = d.description;
+    if (d.latitude != null) updates.latitude = String(d.latitude);
+    if (d.longitude != null) updates.longitude = String(d.longitude);
+    if (d.photos != null) updates.photos = d.photos;
+    if (d.wilaya != null) updates.wilaya = d.wilaya;
+
+    const [site] = await db
+      .update(sitesTable)
+      .set(updates as any)
+      .where(eq(sitesTable.id, params.data.id))
+      .returning();
+    if (!site) {
+      res.status(404).json({ error: "Site not found" });
+      return;
+    }
+    const [vendor] = await db.select().from(vendorsTable).where(eq(vendorsTable.id, site.vendorId));
+    res.json(formatSite(site, vendor, 0));
+  },
+);
+
+// DELETE /sites/:id
+router.delete(
+  "/sites/:id",
+  authenticate,
+  requireRole("vendor", "admin"),
+  async (req, res): Promise<void> => {
+    const params = DeleteSiteParams.safeParse(req.params);
+    if (!params.success) {
+      res.status(400).json({ error: params.error.message });
+      return;
+    }
+    await db.delete(sitesTable).where(eq(sitesTable.id, params.data.id));
+    res.sendStatus(204);
+  },
+);
+
+// GET /sites/:id/properties
+router.get("/sites/:id/properties", async (req, res): Promise<void> => {
+  const params = ListSitePropertiesParams.safeParse(req.params);
+  if (!params.success) {
+    res.status(400).json({ error: params.error.message });
+    return;
+  }
+  const rows = await db
+    .select({ property: propertiesTable, vendor: vendorsTable })
+    .from(propertiesTable)
+    .leftJoin(vendorsTable, eq(propertiesTable.vendorId, vendorsTable.id))
+    .where(eq(propertiesTable.siteId, params.data.id))
+    .orderBy(desc(propertiesTable.createdAt));
+
+  const [countRow] = await db
+    .select({ count: sql<number>`count(*)::int` })
+    .from(propertiesTable)
+    .where(eq(propertiesTable.siteId, params.data.id));
+
+  const total = countRow?.count ?? 0;
+  res.json({
+    data: rows.map(({ property, vendor }) => ({
+      id: property.id,
+      vendorId: property.vendorId,
+      type: property.type,
+      apartmentType: property.apartmentType,
+      description: property.description,
+      equipment: property.equipment ?? [],
+      price: Number(property.price),
+      latitude: property.latitude ? Number(property.latitude) : null,
+      longitude: property.longitude ? Number(property.longitude) : null,
+      photos: property.photos ?? [],
+      status: property.status,
+      wilaya: property.wilaya,
+      siteId: property.siteId,
+      views: property.views,
+      isFeatured: property.isFeatured,
+      createdAt: property.createdAt,
+      vendor: vendor
+        ? { id: vendor.id, firstName: vendor.firstName, lastName: vendor.lastName, phone: vendor.phone, email: vendor.email, isVerified: vendor.isVerified }
+        : null,
+    })),
+    pagination: { page: 1, limit: total, total, totalPages: 1 },
+  });
+});
+
+export default router;
+
+
+===== FICHIER : lib\api-zod\src\generated\types\site.ts =====
+/**
+ * Generated by orval v8.22.0 ًںچ؛
+ * Do not edit manually.
+ * Api
+ * Sakani Dz - Real Estate & Tourism Platform API
+ * OpenAPI spec version: 1.0.0
+ */
+import type { VendorSummary } from './vendorSummary';
+
+export interface Site {
+  id: number;
+  vendorId: number;
+  vendor?: VendorSummary;
+  name: string;
+  /** @nullable */
+  description?: string | null;
+  /** @nullable */
+  latitude?: number | null;
+  /** @nullable */
+  longitude?: number | null;
+  photos: string[];
+  wilaya: string;
+  propertyCount?: number;
+  createdAt: Date;
+}
+
+
+===== FICHIER : artifacts\mobile\src\core\api\apiSlice.ts =====
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { axiosBaseQuery } from "./axiosBaseQuery";
+import type { Property, PropertyListResponse } from "@workspace/api-zod";
+
+export type ListPropertiesArgs = {
+  wilaya?: string;
+  type?: string;
+  apartmentType?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  status?: string;
+  featured?: boolean;
+  vendorId?: number;
+  page?: number;
+  limit?: number;
+};
+
+export const apiSlice = createApi({
+  reducerPath: "api",
+  baseQuery: axiosBaseQuery(),
+  tagTypes: ["Property", "TouristSpot", "Site", "Favorite", "History", "Vendor"],
+  endpoints: (builder) => ({
+    listProperties: builder.query<PropertyListResponse, ListPropertiesArgs | void>({
+      query: (params) => ({ url: "/api/properties", method: "GET", params: params ?? {} }),
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.data.map((p: Property) => ({ type: "Property" as const, id: p.id })),
+              { type: "Property" as const, id: "LIST" },
+            ]
+          : [{ type: "Property" as const, id: "LIST" }],
+    }),
+    getProperty: builder.query<Property, number>({
+      query: (id) => ({ url: `/api/properties/${id}`, method: "GET" }),
+      providesTags: (_result, _error, id) => [{ type: "Property" as const, id }],
+    }),
+  }),
+});
+
+export const { useListPropertiesQuery, useGetPropertyQuery } = apiSlice;
+
+===== FICHIER : artifacts\mobile\src\core\navigation\PropertiesStackNavigator.tsx =====
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import PropertiesScreen from "../../features/properties/PropertiesScreen";
+import PropertyDetailScreen from "../../features/properties/PropertyDetailScreen";
+
+export type PropertiesStackParamList = {
+  PropertiesList: undefined;
+  PropertyDetail: { propertyId: number };
+};
+
+const Stack = createNativeStackNavigator<PropertiesStackParamList>();
+
+export default function PropertiesStackNavigator() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="PropertiesList" component={PropertiesScreen} />
+      <Stack.Screen name="PropertyDetail" component={PropertyDetailScreen} />
+    </Stack.Navigator>
+  );
+}
+
+===== FICHIER : artifacts\mobile\src\core\navigation\RootNavigator.tsx =====
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { NavigationContainer } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
+import { colors } from "../../shared/theme/theme";
+import PropertiesStackNavigator from "./PropertiesStackNavigator";
+import SitesScreen from "../../features/sites/SitesScreen";
+import TourismScreen from "../../features/tourism/TourismScreen";
+import HistoryScreen from "../../features/history-favorites/HistoryScreen";
+import ProfileScreen from "../../features/profile/ProfileScreen";
+
+const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator();
+
+function TabIcon({
+  name,
+  color,
+  size,
+}: {
+  name: keyof typeof Ionicons.glyphMap;
+  color: string;
+  size: number;
+}) {
+  return <Ionicons name={name} size={size} color={color} />;
+}
+
+function TabsNavigator() {
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        headerShown: false,
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.textMuted,
+        tabBarStyle: {
+          backgroundColor: colors.surface,
+          borderTopColor: colors.border,
+          height: 64,
+          paddingBottom: 8,
+          paddingTop: 8,
+        },
+        tabBarLabelStyle: { fontSize: 11, fontWeight: "600" },
+        tabBarIcon: ({ color, size }) => {
+          const icons: Record<string, keyof typeof Ionicons.glyphMap> = {
+            Properties: "home",
+            Sites: "business",
+            Tourism: "map",
+            History: "time",
+            Profile: "person",
+          };
+          return <TabIcon name={icons[route.name] ?? "ellipse"} color={color} size={size} />;
+        },
+      })}
+    >
+      <Tab.Screen name="Properties" component={PropertiesStackNavigator} options={{ title: "Biens" }} />
+      <Tab.Screen name="Sites" component={SitesScreen} options={{ title: "Sites" }} />
+      <Tab.Screen name="Tourism" component={TourismScreen} options={{ title: "Tourisme" }} />
+      <Tab.Screen name="History" component={HistoryScreen} options={{ title: "Historique" }} />
+      <Tab.Screen name="Profile" component={ProfileScreen} options={{ title: "Profil" }} />
+    </Tab.Navigator>
+  );
+}
+
+export default function RootNavigator() {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Tabs" component={TabsNavigator} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
+
+

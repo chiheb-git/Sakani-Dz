@@ -1,0 +1,71 @@
+﻿import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { NavigationContainer } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
+import { colors } from "../../shared/theme/theme";
+import PropertiesStackNavigator from "./PropertiesStackNavigator";
+import SitesStackNavigator from "./SitesStackNavigator";
+import TourismStackNavigator from "./TourismStackNavigator";
+import HistoryScreen from "../../features/history-favorites/HistoryScreen";
+import ProfileStackNavigator from "./ProfileStackNavigator";
+
+const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator();
+
+function TabIcon({
+  name,
+  color,
+  size,
+}: {
+  name: keyof typeof Ionicons.glyphMap;
+  color: string;
+  size: number;
+}) {
+  return <Ionicons name={name} size={size} color={color} />;
+}
+
+function TabsNavigator() {
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        headerShown: false,
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.textMuted,
+        tabBarStyle: {
+          backgroundColor: colors.surface,
+          borderTopColor: colors.border,
+          height: 64,
+          paddingBottom: 8,
+          paddingTop: 8,
+        },
+        tabBarLabelStyle: { fontSize: 11, fontWeight: "600" },
+        tabBarIcon: ({ color, size }) => {
+          const icons: Record<string, keyof typeof Ionicons.glyphMap> = {
+            Properties: "home",
+            Sites: "business",
+            Tourism: "map",
+            History: "time",
+            Profile: "person",
+          };
+          return <TabIcon name={icons[route.name] ?? "ellipse"} color={color} size={size} />;
+        },
+      })}
+    >
+      <Tab.Screen name="Properties" component={PropertiesStackNavigator} options={{ title: "Biens" }} />
+      <Tab.Screen name="Sites" component={SitesStackNavigator} options={{ title: "Sites" }} />
+      <Tab.Screen name="Tourism" component={TourismStackNavigator} options={{ title: "Tourisme" }} />
+      <Tab.Screen name="History" component={HistoryScreen} options={{ title: "Historique" }} />
+      <Tab.Screen name="Profile" component={ProfileStackNavigator} options={{ title: "Profil" }} />
+    </Tab.Navigator>
+  );
+}
+
+export default function RootNavigator() {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Tabs" component={TabsNavigator} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}

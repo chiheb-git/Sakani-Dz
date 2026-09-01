@@ -1,4 +1,4 @@
-# ============================================================================
+﻿# ============================================================================
 # SECURITY: Minimum release age for npm packages (supply-chain attack defense)
 # ============================================================================
 #
@@ -29,10 +29,13 @@ minimumReleaseAge: 1440
 
 minimumReleaseAgeExclude:
   # Exclude @replit scoped packages from the minimum release age check.
-  # These are published by Replit and trusted — the supply-chain attack vector
+  # These are published by Replit and trusted â€” the supply-chain attack vector
   # this setting guards against does not apply to our own packages.
   - '@replit/*'
   - stripe-replit-sync
+  - expo-constants@57.0.8
+  - expo-location@57.0.7
+  - expo-notifications@57.0.8
 
 packages:
   - artifacts/*
@@ -158,3 +161,6 @@ overrides:
   # drizzle-kit uses esbuild internally on an older version that's vulnerable, this overrides it
   "@esbuild-kit/esm-loader": "npm:tsx@^4.21.0"
   esbuild: "0.27.3"
+
+allowBuilds:
+  esbuild: false
