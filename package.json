@@ -1,25 +1,26 @@
-{
-  "name": "workspace",
-  "version": "0.0.0",
-  "license": "MIT",
-  "scripts": {
-    "preinstall": "sh -c 'rm -f package-lock.json yarn.lock; case \"$npm_config_user_agent\" in pnpm/*) ;; *) echo \"Use pnpm instead\" >&2; exit 1 ;; esac'",
-    "build": "pnpm run typecheck && pnpm -r --if-present run build",
-    "audit:mobile-i18n": "node scripts/audit-mobile-i18n.mjs",
-    "typecheck:libs": "tsc --build",
-    "typecheck": "pnpm run typecheck:libs && pnpm -r --filter \"./artifacts/**\" --filter \"./scripts\" --if-present run typecheck"
-  },
-  "private": true,
-  "dependencies": {
-    "@replit/connectors-sdk": "^0.4.1",
-    "esbuild": "0.27.3",
-    "pg": "^8.22.0"
-  },
-  "devDependencies": {
-    "@esbuild/win32-x64": "0.27.3",
-    "@tailwindcss/oxide-win32-x64-msvc": "^4.3.3",
-    "@types/pg": "^8.20.0",
-    "prettier": "^3.9.5",
-    "typescript": "~5.9.3"
-  }
+﻿{
+    "name":  "workspace",
+    "version":  "0.0.0",
+    "license":  "MIT",
+    "scripts":  {
+                    "preinstall":  "sh -c \u0027rm -f package-lock.json yarn.lock; case \"$npm_config_user_agent\" in pnpm/*) ;; *) echo \"Use pnpm instead\" \u003e\u00262; exit 1 ;; esac\u0027",
+                    "build":  "pnpm run typecheck \u0026\u0026 pnpm -r --if-present run build",
+                    "audit:mobile-i18n":  "node scripts/audit-mobile-i18n.mjs",
+                    "typecheck:libs":  "tsc --build",
+                    "typecheck":  "pnpm run typecheck:libs \u0026\u0026 pnpm -r --filter \"./artifacts/**\" --filter \"./scripts\" --if-present run typecheck"
+                },
+    "private":  true,
+    "dependencies":  {
+                         "@replit/connectors-sdk":  "^0.4.1",
+                         "esbuild":  "0.27.3",
+                         "pg":  "^8.22.0"
+                     },
+    "devDependencies":  {
+                            "@esbuild/win32-x64":  "0.27.3",
+                            "@tailwindcss/oxide-win32-x64-msvc":  "^4.3.3",
+                            "@types/pg":  "^8.20.0",
+                            "prettier":  "^3.9.5",
+                            "typescript":  "~5.9.3"
+                        },
+    "packageManager":  "pnpm@11.21.0"
 }
