@@ -1,10 +1,13 @@
 ﻿import { useMemo } from "react";
-import { View, Text, SectionList, StyleSheet, ActivityIndicator, TouchableOpacity, Image } from "react-native";
+import { View, Text, SectionList, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { colors, spacing, radius, typography, shadow } from "../../shared/theme/theme";
 import { useListHistoryQuery, useRemoveHistoryEntryMutation } from "../../core/api/apiSlice";
 import type { HistoryEntry } from "../../core/api/apiSlice";
+import VideoBackgroundHeader from "../../shared/components/VideoBackgroundHeader";
+import FadeIn from "../../shared/components/FadeIn";
+import SkeletonCard from "../../shared/components/SkeletonCard";
 
 function formatDateLabel(dateStr: string): string {
   const date = new Date(dateStr);
@@ -50,15 +53,15 @@ export default function HistoryScreen() {
 
   return (
     <View style={styles.container}>
+      <VideoBackgroundHeader>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Historique</Text>
         <Text style={styles.headerSubtitle}>Vos biens et lieux consultés récemment</Text>
       </View>
+      </VideoBackgroundHeader>
 
       {isLoading ? (
-        <View style={styles.centerFill}>
-          <ActivityIndicator size="large" color={colors.primary} />
-        </View>
+        <View style={styles.loadingList}><SkeletonCard /><SkeletonCard /></View>
       ) : entries.length === 0 ? (
         <View style={styles.centerFill}>
           <Ionicons name="time" size={40} color={colors.textMuted} />
@@ -83,7 +86,7 @@ export default function HistoryScreen() {
               : item.touristSpot?.wilaya ?? "";
 
             return (
-              <TouchableOpacity style={styles.row} activeOpacity={0.85} onPress={() => handlePress(item)}>
+              <FadeIn delay={60}><TouchableOpacity style={styles.row} activeOpacity={0.85} onPress={() => handlePress(item)}>
                 <View style={styles.imageWrapper}>
                   {photo ? (
                     <Image source={{ uri: photo }} style={styles.image} />
@@ -118,7 +121,7 @@ export default function HistoryScreen() {
                 >
                   <Ionicons name="trash-outline" size={18} color={colors.textMuted} />
                 </TouchableOpacity>
-              </TouchableOpacity>
+              </TouchableOpacity></FadeIn>
             );
           }}
         />
@@ -130,7 +133,7 @@ export default function HistoryScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
   header: {
-    backgroundColor: colors.primary,
+    backgroundColor: "transparent",
     paddingTop: spacing.xxl,
     paddingBottom: spacing.lg,
     paddingHorizontal: spacing.lg,
@@ -141,6 +144,7 @@ const styles = StyleSheet.create({
   headerSubtitle: { ...typography.body, color: "rgba(255,255,255,0.75)", marginTop: 4 },
   centerFill: { flex: 1, alignItems: "center", justifyContent: "center", gap: spacing.sm },
   emptyText: { ...typography.body, color: colors.textMuted },
+  loadingList: { paddingTop: spacing.md },
   sectionHeader: {
     ...typography.h3,
     color: colors.textPrimary,

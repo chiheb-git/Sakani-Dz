@@ -11,7 +11,7 @@ const Stack = createNativeStackNavigator<PropertiesStackParamList>();
 
 export default function PropertiesStackNavigator() {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Navigator screenOptions={{ headerShown: false, animation: "slide_from_right" }}>
       <Stack.Screen name="PropertiesList" component={PropertiesScreen} />
       <Stack.Screen name="PropertyDetail" component={PropertyDetailScreen} />
     </Stack.Navigator>

@@ -1,14 +1,19 @@
 ﻿import { useState, useMemo } from "react";
-import { View, Text, FlatList, StyleSheet, ActivityIndicator, RefreshControl, TouchableOpacity } from "react-native";
+import { useTranslation } from "react-i18next";
+import { View, Text, FlatList, StyleSheet, RefreshControl, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { colors, spacing, radius, typography, shadow } from "../../shared/theme/theme";
 import { useListPropertiesQuery } from "../../core/api/apiSlice";
 import PropertyCard from "./components/PropertyCard";
 import WilayaPicker from "../../shared/components/WilayaPicker";
+import FadeIn from "../../shared/components/FadeIn";
+import SkeletonCard from "../../shared/components/SkeletonCard";
+import VideoBackgroundHeader from "../../shared/components/VideoBackgroundHeader";
 import type { Property } from "@workspace/api-zod";
 
 export default function PropertiesScreen() {
+  const { t } = useTranslation();
   const navigation = useNavigation<any>();
   const [selectedWilaya, setSelectedWilaya] = useState<string | null>(null);
   const [selectedType, setSelectedType] = useState<"all" | "apartment" | "villa">("all");
@@ -24,19 +29,20 @@ export default function PropertiesScreen() {
 
   const { data, isLoading, isFetching, refetch } = useListPropertiesQuery(queryArgs);
   const properties: Property[] = data?.data ?? [];
-
   const tabs: { key: "all" | "apartment" | "villa"; label: string; icon: keyof typeof Ionicons.glyphMap }[] = [
-    { key: "all", label: "Tous", icon: "grid" },
-    { key: "apartment", label: "Appartements", icon: "home" },
-    { key: "villa", label: "Villas", icon: "business" },
+    { key: "all", label: t("properties.tabs.all"), icon: "grid" },
+    { key: "apartment", label: t("properties.tabs.apartments"), icon: "home" },
+    { key: "villa", label: t("properties.tabs.villas"), icon: "business" },
   ];
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Sakani Dz</Text>
-        <Text style={styles.headerSubtitle}>Trouvez votre logement idéal en Algérie</Text>
-      </View>
+      <VideoBackgroundHeader>
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>{t("app.title")}</Text>
+          <Text style={styles.headerSubtitle}>{t("app.subtitle")}</Text>
+        </View>
+      </VideoBackgroundHeader>
 
       <View style={styles.typeTabs}>
         {tabs.map((tab) => {
@@ -58,13 +64,11 @@ export default function PropertiesScreen() {
       <WilayaPicker selectedWilaya={selectedWilaya} onSelectWilaya={setSelectedWilaya} />
 
       {isLoading ? (
-        <View style={styles.centerFill}>
-          <ActivityIndicator size="large" color={colors.primary} />
-        </View>
+        <FlatList data={[1, 2, 3]} keyExtractor={(item) => String(item)} contentContainerStyle={{ paddingTop: spacing.md }} renderItem={() => <SkeletonCard />} />
       ) : properties.length === 0 ? (
         <View style={styles.centerFill}>
           <Ionicons name="search" size={40} color={colors.textMuted} />
-          <Text style={styles.emptyText}>Aucun bien trouvé pour ces critères</Text>
+          <Text style={styles.emptyText}>{t("properties.empty")}</Text>
         </View>
       ) : (
         <FlatList
@@ -74,11 +78,10 @@ export default function PropertiesScreen() {
           refreshControl={
             <RefreshControl refreshing={isFetching && !isLoading} onRefresh={refetch} tintColor={colors.primary} />
           }
-          renderItem={({ item }) => (
-            <PropertyCard
-              property={item}
-              onPress={() => navigation.navigate("PropertyDetail", { propertyId: item.id })}
-            />
+          renderItem={({ item, index }) => (
+            <FadeIn delay={index * 70}>
+              <PropertyCard property={item} onPress={() => navigation.navigate("PropertyDetail", { propertyId: item.id })} />
+            </FadeIn>
           )}
         />
       )}
@@ -89,7 +92,7 @@ export default function PropertiesScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
   header: {
-    backgroundColor: colors.primary,
+    backgroundColor: "transparent",
     paddingTop: spacing.xxl,
     paddingBottom: spacing.lg,
     paddingHorizontal: spacing.lg,

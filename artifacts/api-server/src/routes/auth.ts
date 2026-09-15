@@ -244,14 +244,6 @@ router.post("/auth/refresh", async (req, res): Promise<void> => {
   }
   const { refreshToken } = parsed.data;
 
-  let payload;
-  try {
-    payload = verifyToken(refreshToken);
-  } catch {
-    res.status(401).json({ error: "Invalid refresh token" });
-    return;
-  }
-
   const tokenHash = hashToken(refreshToken);
   const [stored] = await db
     .select()
@@ -268,12 +260,15 @@ router.post("/auth/refresh", async (req, res): Promise<void> => {
     .set({ revoked: true })
     .where(eq(refreshTokensTable.id, stored.id));
 
-  const newPayload = { userId: payload.userId, role: payload.role };
+  // Refresh tokens are deliberately opaque random values, not JWTs. Their
+  // database record is the source of truth for identity and revocation.
+  const role = stored.role as "client" | "vendor" | "admin";
+  const newPayload = { userId: stored.userId, role };
   const accessToken = signAccessToken(newPayload);
   const newRefreshValue = generateRefreshTokenValue();
   await db.insert(refreshTokensTable).values({
-    userId: payload.userId,
-    role: payload.role,
+    userId: stored.userId,
+    role,
     tokenHash: hashToken(newRefreshValue),
     expiresAt: refreshTokenExpiresAt(),
   });
@@ -281,8 +276,8 @@ router.post("/auth/refresh", async (req, res): Promise<void> => {
   res.json({
     accessToken,
     refreshToken: newRefreshValue,
-    role: payload.role,
-    userId: payload.userId,
+    role,
+    userId: stored.userId,
     name: null,
   });
 });

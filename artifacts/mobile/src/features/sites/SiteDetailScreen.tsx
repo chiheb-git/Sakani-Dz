@@ -2,6 +2,7 @@
 import { View, Text, Image, StyleSheet, TouchableOpacity, ActivityIndicator, FlatList, Dimensions } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { colors, spacing, radius, typography } from "../../shared/theme/theme";
+import SkeletonCard from "../../shared/components/SkeletonCard";
 import { useGetSiteQuery, useListSitePropertiesQuery } from "../../core/api/apiSlice";
 import PropertyCard from "../properties/components/PropertyCard";
 
@@ -18,9 +19,7 @@ export default function SiteDetailScreen() {
 
   if (siteLoading || !site) {
     return (
-      <View style={styles.centerFill}>
-        <ActivityIndicator size="large" color={colors.primary} />
-      </View>
+      <View style={styles.loading}><SkeletonCard /></View>
     );
   }
 
@@ -90,6 +89,7 @@ export default function SiteDetailScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
   centerFill: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: colors.background },
+  loading: { flex: 1, justifyContent: "center", backgroundColor: colors.background },
   centerFillInline: { alignItems: "center", justifyContent: "center", paddingVertical: spacing.xl },
   imageWrapper: { height: 240, backgroundColor: colors.border, position: "relative" },
   image: { height: "100%" },

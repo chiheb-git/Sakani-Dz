@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { colors, spacing, radius, typography, shadow } from "../../shared/theme/theme";
+import SkeletonCard from "../../shared/components/SkeletonCard";
 import { useGetPropertyQuery, useListFavoritesQuery, useAddFavoriteMutation, useRemoveFavoriteMutation } from "../../core/api/apiSlice";
 import { useRecordHistory } from "../../shared/hooks/useRecordHistory";
 
@@ -42,9 +43,7 @@ export default function PropertyDetailScreen() {
 
   if (isLoading || !property) {
     return (
-      <View style={styles.centerFill}>
-        <ActivityIndicator size="large" color={colors.primary} />
-      </View>
+      <View style={styles.loading}><SkeletonCard /></View>
     );
   }
 
@@ -193,6 +192,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: colors.background,
   },
+  loading: { flex: 1, justifyContent: "center", backgroundColor: colors.background },
   imageWrapper: {
     height: 280,
     backgroundColor: colors.border,

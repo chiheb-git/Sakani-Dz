@@ -1,4 +1,4 @@
-﻿import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator, FlatList } from "react-native";
+﻿import { View, Text, StyleSheet, TouchableOpacity, FlatList } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
@@ -7,6 +7,9 @@ import { loggedOut } from "../auth/authSlice";
 import { clearAuthToken } from "../../core/api/axiosInstance";
 import { useGetVendorProfileQuery, useGetVendorStatsQuery, useListVendorPropertiesQuery } from "../../core/api/apiSlice";
 import PropertyCard from "../properties/components/PropertyCard";
+import VideoBackgroundHeader from "../../shared/components/VideoBackgroundHeader";
+import FadeIn from "../../shared/components/FadeIn";
+import SkeletonCard from "../../shared/components/SkeletonCard";
 
 function formatDate(dateStr: string | Date | null | undefined): string {
   if (!dateStr) return "—";
@@ -33,14 +36,12 @@ export default function VendorDashboardScreen() {
   const handleLogout = async () => {
     await clearAuthToken();
     dispatch(loggedOut());
-    navigation.navigate("ProfileHome");
+    navigation.navigate("Profile", { screen: "ProfileHome" });
   };
 
   if (vendorLoading || !vendor) {
     return (
-      <View style={styles.centerFill}>
-        <ActivityIndicator size="large" color={colors.primary} />
-      </View>
+      <View style={styles.loading}><SkeletonCard /></View>
     );
   }
 
@@ -54,6 +55,7 @@ export default function VendorDashboardScreen() {
         contentContainerStyle={{ paddingBottom: spacing.xl }}
         ListHeaderComponent={
           <>
+            <VideoBackgroundHeader>
             <View style={styles.header}>
               <View style={styles.headerRow}>
                 <Text style={styles.headerTitle}>
@@ -65,6 +67,7 @@ export default function VendorDashboardScreen() {
               </View>
               <Text style={styles.headerSubtitle}>Code vendeur : {vendor.code ?? "—"}</Text>
             </View>
+            </VideoBackgroundHeader>
 
             <View style={styles.content}>
               <View style={styles.statusCard}>
@@ -80,7 +83,7 @@ export default function VendorDashboardScreen() {
               </View>
 
               {statsLoading ? (
-                <ActivityIndicator size="small" color={colors.primary} style={{ marginVertical: spacing.lg }} />
+                <FadeIn><View style={styles.statsLoading}><SkeletonCard /></View></FadeIn>
               ) : stats ? (
                 <View style={styles.statsGrid}>
                   <View style={styles.statBox}>
@@ -117,7 +120,7 @@ export default function VendorDashboardScreen() {
         }
         ListEmptyComponent={
           propertiesLoading ? (
-            <ActivityIndicator size="small" color={colors.primary} style={{ marginVertical: spacing.lg }} />
+            <View style={styles.statsLoading}><SkeletonCard /></View>
           ) : (
             <View style={styles.emptyState}>
               <Ionicons name="home" size={36} color={colors.textMuted} />
@@ -139,8 +142,10 @@ export default function VendorDashboardScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
   centerFill: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: colors.background },
+  loading: { flex: 1, justifyContent: "center", paddingTop: spacing.xl, backgroundColor: colors.background },
+  statsLoading: { marginBottom: spacing.md },
   header: {
-    backgroundColor: colors.primary,
+    backgroundColor: "transparent",
     paddingTop: spacing.xxl,
     paddingBottom: spacing.lg,
     paddingHorizontal: spacing.lg,

@@ -1,14 +1,15 @@
-﻿import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+﻿import { View, Text, Image, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { colors, spacing, radius, typography, shadow } from "../../../shared/theme/theme";
 import type { Site } from "@workspace/api-zod";
+import AnimatedPressable from "../../../shared/components/AnimatedPressable";
 
 export default function SiteCard({ site, onPress }: { site: Site; onPress: () => void }) {
   const photo = site.photos?.[0];
   const count = site.propertyCount ?? 0;
 
   return (
-    <TouchableOpacity style={styles.card} activeOpacity={0.9} onPress={onPress}>
+    <AnimatedPressable style={styles.card} onPress={onPress}>
       <View style={styles.imageWrapper}>
         {photo ? (
           <Image source={{ uri: photo }} style={styles.image} />
@@ -39,7 +40,7 @@ export default function SiteCard({ site, onPress }: { site: Site; onPress: () =>
           </Text>
         ) : null}
       </View>
-    </TouchableOpacity>
+    </AnimatedPressable>
   );
 }
 

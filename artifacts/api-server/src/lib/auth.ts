@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { randomBytes, createHash } from "crypto";
 
-const JWT_SECRET = process.env.SESSION_SECRET ?? "sakani-dz-fallback-secret";
+const JWT_SECRET = process.env.JWT_SECRET ?? process.env.SESSION_SECRET ?? "sakani-dz-fallback-secret";
 const ACCESS_TOKEN_EXPIRY = "2h";
 const REFRESH_TOKEN_EXPIRY = "30d";
 

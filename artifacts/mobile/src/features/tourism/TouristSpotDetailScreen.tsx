@@ -1,7 +1,9 @@
 ﻿import { useRoute, useNavigation } from "@react-navigation/native";
+import { useState } from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity, Linking, ActivityIndicator, Dimensions, ScrollView } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { colors, spacing, radius, typography, shadow } from "../../shared/theme/theme";
+import SkeletonCard from "../../shared/components/SkeletonCard";
 import { useGetTouristSpotQuery } from "../../core/api/apiSlice";
 import { useRecordHistory } from "../../shared/hooks/useRecordHistory";
 
@@ -16,13 +18,13 @@ export default function TouristSpotDetailScreen() {
 
   if (isLoading || !spot) {
     return (
-      <View style={styles.centerFill}>
-        <ActivityIndicator size="large" color={colors.primary} />
-      </View>
+      <View style={styles.loading}><SkeletonCard /></View>
     );
   }
 
+  const [imageFailed, setImageFailed] = useState(false);
   const photo = spot.photos?.[0];
+  const imageUri = photo && !imageFailed ? photo : null;
 
   const handleMap = () => {
     if (spot.latitude != null && spot.longitude != null) {
@@ -35,11 +37,16 @@ export default function TouristSpotDetailScreen() {
     <View style={styles.container}>
       <ScrollView bounces={false}>
         <View style={styles.imageWrapper}>
-          {photo ? (
-            <Image source={{ uri: photo }} style={[styles.image, { width: screenWidth }]} />
+          {imageUri ? (
+            <Image
+              source={{ uri: imageUri }}
+              style={[styles.image, { width: screenWidth }]}
+              onError={() => setImageFailed(true)}
+            />
           ) : (
             <View style={[styles.image, styles.imagePlaceholder, { width: screenWidth }]}>
               <Ionicons name="map" size={48} color={colors.textMuted} />
+              <Text style={styles.imagePlaceholderText}>Photo non disponible</Text>
             </View>
           )}
           <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
@@ -80,9 +87,11 @@ export default function TouristSpotDetailScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
   centerFill: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: colors.background },
+  loading: { flex: 1, justifyContent: "center", backgroundColor: colors.background },
   imageWrapper: { height: 280, backgroundColor: colors.border, position: "relative" },
   image: { height: "100%" },
-  imagePlaceholder: { height: "100%", alignItems: "center", justifyContent: "center" },
+  imagePlaceholder: { height: "100%", alignItems: "center", justifyContent: "center", gap: spacing.sm },
+  imagePlaceholderText: { ...typography.bodyMedium, color: colors.textMuted },
   backButton: {
     position: "absolute",
     top: spacing.xxl,

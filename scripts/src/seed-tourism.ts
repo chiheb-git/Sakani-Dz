@@ -18,7 +18,8 @@ async function main() {
       wilaya: "Alger",
       latitude: "36.7850000",
       longitude: "3.0608000",
-      photos: ["https://images.unsplash.com/photo-1570939274-4f1d5a6a5f77?w=800"],
+      // No verified, place-specific Commons file has been registered for this legacy seed.
+      photos: [],
     },
     {
       name: "Jardin d'Essai du Hamma",
@@ -26,7 +27,7 @@ async function main() {
       wilaya: "Alger",
       latitude: "36.7469000",
       longitude: "3.0781000",
-      photos: ["https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=800"],
+      photos: [],
     },
     {
       name: "Grande Mosquée d'Oran",
@@ -34,7 +35,7 @@ async function main() {
       wilaya: "Oran",
       latitude: "35.6987000",
       longitude: "-0.6349000",
-      photos: ["https://images.unsplash.com/photo-1564769625392-651b2c0e5fb2?w=800"],
+      photos: [],
     },
     {
       name: "Fort de Santa Cruz",
@@ -42,7 +43,7 @@ async function main() {
       wilaya: "Oran",
       latitude: "35.7089000",
       longitude: "-0.6467000",
-      photos: ["https://images.unsplash.com/photo-1533105079780-92b9be482077?w=800"],
+      photos: [],
     },
     {
       name: "Grande Mosquée de Tlemcen",
@@ -50,7 +51,7 @@ async function main() {
       wilaya: "Tlemcen",
       latitude: "34.8828000",
       longitude: "-1.3167000",
-      photos: ["https://images.unsplash.com/photo-1519817650390-64a93db51149?w=800"],
+      photos: [],
     },
     {
       name: "Grottes de Beni Add",
@@ -58,7 +59,7 @@ async function main() {
       wilaya: "Tlemcen",
       latitude: "34.8567000",
       longitude: "-1.4008000",
-      photos: ["https://images.unsplash.com/photo-1544819667-4b6c2e0f7b5e?w=800"],
+      photos: [],
     },
   ];
 

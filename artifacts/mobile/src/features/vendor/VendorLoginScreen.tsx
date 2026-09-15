@@ -4,14 +4,19 @@ import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
 import { colors, spacing, radius, typography, shadow } from "../../shared/theme/theme";
-import { useLoginVendorMutation } from "../../core/api/apiSlice";
+import { useLoginVendorMutation, useRegisterVendorPushTokenMutation } from "../../core/api/apiSlice";
 import { vendorLoggedIn } from "../auth/authSlice";
 import { saveAuthToken } from "../../core/api/axiosInstance";
+import { getExpoPushToken } from "../../core/notifications";
+import VideoBackgroundHeader from "../../shared/components/VideoBackgroundHeader";
+import AnimatedPressable from "../../shared/components/AnimatedPressable";
+import FadeIn from "../../shared/components/FadeIn";
 
 export default function VendorLoginScreen() {
   const navigation = useNavigation<any>();
   const dispatch = useDispatch();
   const [loginVendor, { isLoading }] = useLoginVendorMutation();
+  const [registerPushToken] = useRegisterVendorPushTokenMutation();
 
   const [code, setCode] = useState("");
   const [password, setPassword] = useState("");
@@ -25,6 +30,8 @@ export default function VendorLoginScreen() {
       const result = await loginVendor({ code: code.trim(), password }).unwrap();
       await saveAuthToken(result.accessToken);
       dispatch(vendorLoggedIn({ vendorId: result.userId, token: result.accessToken }));
+      const pushToken = await getExpoPushToken();
+      if (pushToken) await registerPushToken({ token: pushToken });
       navigation.navigate("VendorDashboard");
     } catch {
       Alert.alert("Erreur", "Code ou mot de passe incorrect.");
@@ -33,6 +40,7 @@ export default function VendorLoginScreen() {
 
   return (
     <View style={styles.container}>
+      <VideoBackgroundHeader>
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={22} color="#fff" />
@@ -40,8 +48,9 @@ export default function VendorLoginScreen() {
         <Text style={styles.headerTitle}>Connexion vendeur</Text>
         <Text style={styles.headerSubtitle}>Accédez à votre espace vendeur</Text>
       </View>
+      </VideoBackgroundHeader>
 
-      <View style={styles.content}>
+      <FadeIn style={styles.content}>
         <TextInput
           style={styles.input}
           placeholder="Code vendeur"
@@ -59,14 +68,14 @@ export default function VendorLoginScreen() {
           placeholderTextColor={colors.textMuted}
         />
 
-        <TouchableOpacity style={styles.submitButton} onPress={handleSubmit} disabled={isLoading} activeOpacity={0.85}>
+        <AnimatedPressable style={styles.submitButton} onPress={handleSubmit} disabled={isLoading}>
           {isLoading ? <ActivityIndicator color="#fff" /> : <Text style={styles.submitButtonText}>Se connecter</Text>}
-        </TouchableOpacity>
+        </AnimatedPressable>
 
         <TouchableOpacity style={styles.forgotButton} onPress={() => navigation.navigate("VendorForgotPassword")}>
           <Text style={styles.forgotButtonText}>Mot de passe oublié ?</Text>
         </TouchableOpacity>
-      </View>
+      </FadeIn>
     </View>
   );
 }
@@ -74,7 +83,7 @@ export default function VendorLoginScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
   header: {
-    backgroundColor: colors.primary,
+    backgroundColor: "transparent",
     paddingTop: spacing.xxl,
     paddingBottom: spacing.lg,
     paddingHorizontal: spacing.lg,

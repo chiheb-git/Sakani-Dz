@@ -202,6 +202,9 @@ export const apiSlice = createApi({
     getVendorStats: builder.query<VendorStats, void>({
       query: () => ({ url: "/api/vendors/me/stats", method: "GET" }),
     }),
+    registerVendorPushToken: builder.mutation<void, { token: string }>({
+      query: (body) => ({ url: "/api/vendors/me/push-token", method: "POST", data: body }),
+    }),
     createProperty: builder.mutation<Property, CreatePropertyInput>({
       query: (body) => ({ url: "/api/properties", method: "POST", data: body }),
       invalidatesTags: [
@@ -283,6 +286,7 @@ export const {
   useGetVendorProfileQuery,
   useListVendorPropertiesQuery,
   useGetVendorStatsQuery,
+  useRegisterVendorPushTokenMutation,
   useCreatePropertyMutation,
   useUpdatePropertyMutation,
   useDeletePropertyMutation,

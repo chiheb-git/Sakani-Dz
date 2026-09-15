@@ -1,0 +1,134 @@
+{
+  "common": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "ok": "OK",
+    "loading": "Chargement...",
+    "search": "Rechercher",
+    "today": "Aujourd'hui",
+    "yesterday": "Hier",
+    "profile": "Profil",
+    "settings": "Paramètres",
+    "privacyPolicy": "Politique de confidentialité"
+  },
+  "app": {
+    "title": "Sakani Dz",
+    "subtitle": "Trouvez votre logement idéal en Algérie",
+    "sitesSubtitle": "Résidences et lotissements en Algérie",
+    "tourismSubtitle": "Lieux touristiques à découvrir en Algérie",
+    "historySubtitle": "Vos biens et lieux consultés récemment"
+  },
+  "properties": {
+    "title": "Biens",
+    "tabs": {
+      "all": "Tous",
+      "apartments": "Appartements",
+      "villas": "Villas"
+    },
+    "empty": "Aucun bien trouvé pour ces critères",
+    "featured": "En vedette",
+    "available": "Disponible",
+    "rented": "Loué",
+    "description": "Description",
+    "equipment": "Équipements",
+    "localisation": "Localisation",
+    "map": "Voir sur la carte",
+    "vendor": "Vendeur",
+    "verified": "Vendeur vérifié",
+    "call": "Appeler",
+    "whatsapp": "WhatsApp",
+    "publish": "Publier le bien",
+    "edit": "Modifier le bien",
+    "add": "Ajouter un bien",
+    "inputPrice": "Ex: 8500000",
+    "status": "Statut",
+    "photos": "Photos",
+    "photoPlaceholder": "URL de la photo",
+    "missingFields": "Merci de remplir la description, le prix et la wilaya.",
+    "deleted": "Le bien a été supprimé.",
+    "updated": "Le bien a été mis à jour."
+  },
+  "sites": {
+    "title": "Sites",
+    "empty": "Aucun site trouvé pour ces critères",
+    "availableProperties": "Logements disponibles",
+    "count": "{{count}} logement",
+    "countPlural": "{{count}} logements"
+  },
+  "tourism": {
+    "title": "Tourisme",
+    "empty": "Aucun lieu touristique trouvé pour ces critères",
+    "description": "Description",
+    "location": "Localisation",
+    "map": "Voir sur la carte"
+  },
+  "history": {
+    "title": "Historique",
+    "subtitle": "Vos biens et lieux consultés récemment",
+    "empty": "Aucun historique pour le moment",
+    "property": "Bien",
+    "touristSpot": "Lieu touristique",
+    "deleted": "Élément supprimé"
+  },
+  "profile": {
+    "title": "Profil",
+    "subtitle": "Paramètres et compte",
+    "becomeVendor": "Devenir vendeur",
+    "becomeVendorSubtitle": "Publiez vos biens sur Sakani Dz",
+    "alreadyVendor": "Déjà vendeur ?",
+    "alreadyVendorSubtitle": "Connectez-vous avec votre code",
+    "myVendorSpace": "Mon espace vendeur",
+    "myVendorSpaceSubtitle": "Gérer mes biens et mon abonnement",
+    "about": "À propos",
+    "aboutSubtitle": "Sakani Dz — Immobilier & Tourisme en Algérie",
+    "language": "Langue",
+    "languageSubtitle": "Choisissez votre langue",
+    "privacy": "Politique de confidentialité",
+    "privacySubtitle": "Consultez nos conditions d'utilisation"
+  },
+  "vendor": {
+    "register": "Devenir vendeur",
+    "registerSubtitle": "Rejoignez Sakani Dz et publiez vos annonces",
+    "registerSuccess": "Votre inscription a été soumise. Un administrateur va l'examiner et vous recevrez un code d'accès par la suite.",
+    "dashboard": "Mon espace vendeur",
+    "stats": {
+      "properties": "Biens",
+      "views": "Vues",
+      "available": "Disponibles",
+      "sites": "Sites"
+    },
+    "addProperty": "Ajouter un bien",
+    "myProperties": "Mes biens",
+    "logout": "Déconnexion",
+    "code": "Code vendeur",
+    "status": "Statut",
+    "subscriptionUntil": "Abonnement jusqu'au {{date}}",
+    "unsupported": "Type de bien non pris en charge",
+    "login": "Connexion vendeur",
+    "loginSubtitle": "Accédez à votre espace",
+    "forgotPassword": "Mot de passe oublié",
+    "codePlaceholder": "Code vendeur",
+    "passwordPlaceholder": "Mot de passe",
+    "loginButton": "Se connecter",
+    "forgotPasswordSuccess": "Votre demande de réinitialisation a été transmise. Contactez l'administrateur pour récupérer votre nouveau mot de passe.",
+    "forgotPasswordInput": "Merci de saisir votre code vendeur.",
+    "statusPending": "En attente d'approbation",
+    "statusActive": "Actif",
+    "statusRenewal": "Renouvellement requis",
+    "statusBlocked": "Bloqué",
+    "statusRejected": "Rejeté"
+  },
+  "language": {
+    "title": "Choisissez votre langue",
+    "subtitle": "Sélectionnez la langue de votre interface",
+    "french": "Français",
+    "arabic": "العربية",
+    "english": "English",
+    "continue": "Continuer"
+  },
+  "privacy": {
+    "title": "Politique de confidentialité",
+    "content": "Sakani Dz collecte un identifiant technique de l'appareil pour sécuriser la session et améliorer la fiabilité de l'application. Lorsque vous l'autorisez, votre position GPS sert à afficher les biens et lieux proches; elle n'est pas vendue à des tiers. Les informations vendeur (nom, téléphone, adresse, biens publiés et données d'abonnement) sont utilisées pour créer le profil, publier les annonces, permettre le contact demandé et administrer le compte. Les données sont utilisées uniquement pour fournir, sécuriser et améliorer le service, et ne sont pas partagées sans base légale ou consentement lorsque celui-ci est requis. Pour toute question, demande d'accès ou suppression, contactez l'équipe Sakani Dz via le support de l'application."
+  }
+}

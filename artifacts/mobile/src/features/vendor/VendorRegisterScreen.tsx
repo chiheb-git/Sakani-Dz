@@ -15,6 +15,9 @@ import * as Location from "expo-location";
 import { colors, spacing, radius, typography, shadow } from "../../shared/theme/theme";
 import { useRegisterVendorMutation } from "../../core/api/apiSlice";
 import WilayaPicker from "../../shared/components/WilayaPicker";
+import VideoBackgroundHeader from "../../shared/components/VideoBackgroundHeader";
+import AnimatedPressable from "../../shared/components/AnimatedPressable";
+import FadeIn from "../../shared/components/FadeIn";
 
 type PropertyType = "apartment" | "villa" | "site";
 const APARTMENT_TYPES = ["F1", "F2", "F3", "F4", "F5"] as const;
@@ -86,6 +89,7 @@ export default function VendorRegisterScreen() {
 
   return (
     <View style={styles.container}>
+      <VideoBackgroundHeader>
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={22} color="#fff" />
@@ -93,8 +97,9 @@ export default function VendorRegisterScreen() {
         <Text style={styles.headerTitle}>Devenir vendeur</Text>
         <Text style={styles.headerSubtitle}>Rejoignez Sakani Dz et publiez vos annonces</Text>
       </View>
+      </VideoBackgroundHeader>
 
-      <ScrollView contentContainerStyle={styles.content}>
+      <FadeIn><ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.sectionTitle}>Informations personnelles</Text>
         <TextInput style={styles.input} placeholder="Prénom *" value={firstName} onChangeText={setFirstName} placeholderTextColor={colors.textMuted} />
         <TextInput style={styles.input} placeholder="Nom *" value={lastName} onChangeText={setLastName} placeholderTextColor={colors.textMuted} />
@@ -168,10 +173,11 @@ export default function VendorRegisterScreen() {
           placeholderTextColor={colors.textMuted}
         />
 
-        <TouchableOpacity style={styles.submitButton} onPress={handleSubmit} disabled={isLoading} activeOpacity={0.85}>
+        <AnimatedPressable style={styles.submitButton} onPress={handleSubmit} disabled={isLoading}>
           {isLoading ? <ActivityIndicator color="#fff" /> : <Text style={styles.submitButtonText}>Envoyer ma demande</Text>}
-        </TouchableOpacity>
+        </AnimatedPressable>
       </ScrollView>
+      </FadeIn>
     </View>
   );
 }
@@ -179,7 +185,7 @@ export default function VendorRegisterScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
   header: {
-    backgroundColor: colors.primary,
+    backgroundColor: "transparent",
     paddingTop: spacing.xxl,
     paddingBottom: spacing.lg,
     paddingHorizontal: spacing.lg,

@@ -4,6 +4,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { colors, spacing, radius, typography, shadow } from "../../shared/theme/theme";
 import { useVendorForgotPasswordMutation } from "../../core/api/apiSlice";
+import VideoBackgroundHeader from "../../shared/components/VideoBackgroundHeader";
+import AnimatedPressable from "../../shared/components/AnimatedPressable";
 
 export default function VendorForgotPasswordScreen() {
   const navigation = useNavigation<any>();
@@ -29,6 +31,7 @@ export default function VendorForgotPasswordScreen() {
 
   return (
     <View style={styles.container}>
+      <VideoBackgroundHeader>
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={22} color="#fff" />
@@ -36,6 +39,7 @@ export default function VendorForgotPasswordScreen() {
         <Text style={styles.headerTitle}>Mot de passe oublié</Text>
         <Text style={styles.headerSubtitle}>Saisissez votre code vendeur pour réinitialiser</Text>
       </View>
+      </VideoBackgroundHeader>
 
       <View style={styles.content}>
         <TextInput
@@ -46,9 +50,9 @@ export default function VendorForgotPasswordScreen() {
           autoCapitalize="characters"
           placeholderTextColor={colors.textMuted}
         />
-        <TouchableOpacity style={styles.submitButton} onPress={handleSubmit} disabled={isLoading} activeOpacity={0.85}>
+        <AnimatedPressable style={styles.submitButton} onPress={handleSubmit} disabled={isLoading}>
           {isLoading ? <ActivityIndicator color="#fff" /> : <Text style={styles.submitButtonText}>Envoyer la demande</Text>}
-        </TouchableOpacity>
+        </AnimatedPressable>
       </View>
     </View>
   );
@@ -57,7 +61,7 @@ export default function VendorForgotPasswordScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
   header: {
-    backgroundColor: colors.primary,
+    backgroundColor: "transparent",
     paddingTop: spacing.xxl,
     paddingBottom: spacing.lg,
     paddingHorizontal: spacing.lg,

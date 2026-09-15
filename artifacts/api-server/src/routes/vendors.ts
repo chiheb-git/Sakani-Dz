@@ -12,8 +12,19 @@ import {
   UpdateVendorProfileBody,
 } from "@workspace/api-zod";
 import { authenticate, requireRole } from "../middlewares/authenticate";
+import { registerVendorPushToken } from "../lib/vendor-reminders";
 
 const router: IRouter = Router();
+
+router.post("/vendors/me/push-token", authenticate, requireRole("vendor"), async (req, res): Promise<void> => {
+  const token = typeof req.body?.token === "string" ? req.body.token.trim() : "";
+  if (!token) {
+    res.status(400).json({ error: "A push token is required" });
+    return;
+  }
+  await registerVendorPushToken(req.user!.userId, token);
+  res.status(204).send();
+});
 
 function formatVendor(v: typeof vendorsTable.$inferSelect) {
   return {

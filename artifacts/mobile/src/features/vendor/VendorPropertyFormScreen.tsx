@@ -19,6 +19,10 @@ import {
   useDeletePropertyMutation,
 } from "../../core/api/apiSlice";
 import WilayaPicker from "../../shared/components/WilayaPicker";
+import VideoBackgroundHeader from "../../shared/components/VideoBackgroundHeader";
+import AnimatedPressable from "../../shared/components/AnimatedPressable";
+import FadeIn from "../../shared/components/FadeIn";
+import SkeletonCard from "../../shared/components/SkeletonCard";
 
 type PropertyType = "apartment" | "villa";
 const APARTMENT_TYPES = ["F1", "F2", "F3", "F4", "F5"] as const;
@@ -116,9 +120,7 @@ export default function VendorPropertyFormScreen() {
 
   if (isEditing && loadingExisting) {
     return (
-      <View style={styles.centerFill}>
-        <ActivityIndicator size="large" color={colors.primary} />
-      </View>
+      <View style={styles.loading}><SkeletonCard /></View>
     );
   }
 
@@ -126,14 +128,16 @@ export default function VendorPropertyFormScreen() {
 
   return (
     <View style={styles.container}>
+      <VideoBackgroundHeader>
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={22} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>{isEditing ? "Modifier le bien" : "Ajouter un bien"}</Text>
       </View>
+      </VideoBackgroundHeader>
 
-      <ScrollView contentContainerStyle={styles.content}>
+      <FadeIn><ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.sectionTitle}>Type</Text>
         <View style={styles.typeRow}>
           {(["apartment", "villa"] as PropertyType[]).map((t) => (
@@ -230,13 +234,13 @@ export default function VendorPropertyFormScreen() {
           </View>
         ))}
 
-        <TouchableOpacity style={styles.submitButton} onPress={handleSubmit} disabled={isSubmitting} activeOpacity={0.85}>
+        <AnimatedPressable style={styles.submitButton} onPress={handleSubmit} disabled={isSubmitting}>
           {isSubmitting ? (
             <ActivityIndicator color="#fff" />
           ) : (
             <Text style={styles.submitButtonText}>{isEditing ? "Enregistrer les modifications" : "Publier le bien"}</Text>
           )}
-        </TouchableOpacity>
+        </AnimatedPressable>
 
         {isEditing ? (
           <TouchableOpacity style={styles.deleteButton} onPress={handleDelete} disabled={deleting} activeOpacity={0.85}>
@@ -251,6 +255,7 @@ export default function VendorPropertyFormScreen() {
           </TouchableOpacity>
         ) : null}
       </ScrollView>
+      </FadeIn>
     </View>
   );
 }
@@ -258,8 +263,9 @@ export default function VendorPropertyFormScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
   centerFill: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: colors.background },
+  loading: { flex: 1, justifyContent: "center", backgroundColor: colors.background },
   header: {
-    backgroundColor: colors.primary,
+    backgroundColor: "transparent",
     paddingTop: spacing.xxl,
     paddingBottom: spacing.lg,
     paddingHorizontal: spacing.lg,

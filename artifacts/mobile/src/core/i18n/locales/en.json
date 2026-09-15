@@ -1,0 +1,134 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "ok": "OK",
+    "loading": "Loading...",
+    "search": "Search",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "profile": "Profile",
+    "settings": "Settings",
+    "privacyPolicy": "Privacy Policy"
+  },
+  "app": {
+    "title": "Sakani Dz",
+    "subtitle": "Find your ideal home in Algeria",
+    "sitesSubtitle": "Residences and housing developments in Algeria",
+    "tourismSubtitle": "Tourist destinations to discover in Algeria",
+    "historySubtitle": "Your recently viewed properties and places"
+  },
+  "properties": {
+    "title": "Properties",
+    "tabs": {
+      "all": "All",
+      "apartments": "Apartments",
+      "villas": "Villas"
+    },
+    "empty": "No properties match these criteria",
+    "featured": "Featured",
+    "available": "Available",
+    "rented": "Rented",
+    "description": "Description",
+    "equipment": "Equipment",
+    "localisation": "Location",
+    "map": "View on map",
+    "vendor": "Seller",
+    "verified": "Verified seller",
+    "call": "Call",
+    "whatsapp": "WhatsApp",
+    "publish": "Publish property",
+    "edit": "Edit property",
+    "add": "Add property",
+    "inputPrice": "Example: 8500000",
+    "status": "Status",
+    "photos": "Photos",
+    "photoPlaceholder": "Photo URL",
+    "missingFields": "Please fill in the description, price and wilaya.",
+    "deleted": "The property has been deleted.",
+    "updated": "The property was updated."
+  },
+  "sites": {
+    "title": "Sites",
+    "empty": "No sites match these criteria",
+    "availableProperties": "Available homes",
+    "count": "{{count}} home",
+    "countPlural": "{{count}} homes"
+  },
+  "tourism": {
+    "title": "Tourism",
+    "empty": "No tourist spots match these criteria",
+    "description": "Description",
+    "location": "Location",
+    "map": "View on map"
+  },
+  "history": {
+    "title": "History",
+    "subtitle": "Your recently viewed properties and places",
+    "empty": "No history yet",
+    "property": "Property",
+    "touristSpot": "Tourist spot",
+    "deleted": "Deleted item"
+  },
+  "profile": {
+    "title": "Profile",
+    "subtitle": "Settings and account",
+    "becomeVendor": "Become a seller",
+    "becomeVendorSubtitle": "List your properties on Sakani Dz",
+    "alreadyVendor": "Already a seller?",
+    "alreadyVendorSubtitle": "Log in with your code",
+    "myVendorSpace": "My seller area",
+    "myVendorSpaceSubtitle": "Manage my properties and subscription",
+    "about": "About",
+    "aboutSubtitle": "Sakani Dz — Real estate & tourism in Algeria",
+    "language": "Language",
+    "languageSubtitle": "Choose your language",
+    "privacy": "Privacy Policy",
+    "privacySubtitle": "Read our terms and conditions"
+  },
+  "vendor": {
+    "register": "Become a seller",
+    "registerSubtitle": "Join Sakani Dz and publish your listings",
+    "registerSuccess": "Your request has been submitted. An administrator will review it and you will receive an access code later.",
+    "dashboard": "Seller dashboard",
+    "stats": {
+      "properties": "Properties",
+      "views": "Views",
+      "available": "Available",
+      "sites": "Sites"
+    },
+    "addProperty": "Add property",
+    "myProperties": "My properties",
+    "logout": "Logout",
+    "code": "Seller code",
+    "status": "Status",
+    "subscriptionUntil": "Subscription until {{date}}",
+    "unsupported": "Unsupported property type",
+    "login": "Seller login",
+    "loginSubtitle": "Access your seller area",
+    "forgotPassword": "Forgot password",
+    "codePlaceholder": "Seller code",
+    "passwordPlaceholder": "Password",
+    "loginButton": "Log in",
+    "forgotPasswordSuccess": "Your reset request has been sent. Contact the administrator to retrieve your new password.",
+    "forgotPasswordInput": "Please enter your seller code.",
+    "statusPending": "Waiting for approval",
+    "statusActive": "Active",
+    "statusRenewal": "Renewal required",
+    "statusBlocked": "Blocked",
+    "statusRejected": "Rejected"
+  },
+  "language": {
+    "title": "Choose your language",
+    "subtitle": "Select the language of your app interface",
+    "french": "Français",
+    "arabic": "العربية",
+    "english": "English",
+    "continue": "Continue"
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "content": "Sakani Dz collects a technical device identifier to secure sessions and improve app reliability. When you grant permission, GPS location is used to show nearby properties and places; it is not sold to third parties. Seller information (name, phone number, address, published properties, and subscription data) is used to create the profile, publish listings, enable requested contact, and administer the account. Data is used only to provide, secure, and improve the service, and is not shared without a legal basis or consent where required. For questions or requests to access or delete your data, contact the Sakani Dz team through the app support channel."
+  }
+}

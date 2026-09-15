@@ -1,19 +1,24 @@
-﻿import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+﻿import { View, Text, Image, StyleSheet } from "react-native";
+import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { colors, spacing, radius, typography, shadow } from "../../../shared/theme/theme";
 import type { TouristSpot } from "@workspace/api-zod";
+import AnimatedPressable from "../../../shared/components/AnimatedPressable";
 
 export default function TouristSpotCard({ spot, onPress }: { spot: TouristSpot; onPress: () => void }) {
+  const [imageFailed, setImageFailed] = useState(false);
   const photo = spot.photos?.[0];
+  const imageUri = photo && !imageFailed ? photo : null;
 
   return (
-    <TouchableOpacity style={styles.card} activeOpacity={0.9} onPress={onPress}>
+    <AnimatedPressable style={styles.card} onPress={onPress}>
       <View style={styles.imageWrapper}>
-        {photo ? (
-          <Image source={{ uri: photo }} style={styles.image} />
+        {imageUri ? (
+          <Image source={{ uri: imageUri }} style={styles.image} onError={() => setImageFailed(true)} />
         ) : (
           <View style={[styles.image, styles.imagePlaceholder]}>
             <Ionicons name="map" size={36} color={colors.textMuted} />
+            <Text style={styles.imagePlaceholderText}>Photo non disponible</Text>
           </View>
         )}
       </View>
@@ -32,7 +37,7 @@ export default function TouristSpotCard({ spot, onPress }: { spot: TouristSpot; 
           </Text>
         ) : null}
       </View>
-    </TouchableOpacity>
+    </AnimatedPressable>
   );
 }
 
@@ -47,7 +52,8 @@ const styles = StyleSheet.create({
   },
   imageWrapper: { width: "100%", height: 160, backgroundColor: colors.border },
   image: { width: "100%", height: "100%" },
-  imagePlaceholder: { alignItems: "center", justifyContent: "center" },
+  imagePlaceholder: { alignItems: "center", justifyContent: "center", gap: spacing.xs },
+  imagePlaceholderText: { ...typography.caption, color: colors.textMuted },
   body: { padding: spacing.md },
   name: { ...typography.h3, color: colors.textPrimary, marginBottom: 4 },
   wilayaRow: { flexDirection: "row", alignItems: "center", gap: 4, marginBottom: spacing.xs },

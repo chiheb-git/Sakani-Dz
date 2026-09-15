@@ -3,6 +3,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { colors, spacing, radius, typography, shadow } from "../../../shared/theme/theme";
 import { useListFavoritesQuery, useAddFavoriteMutation, useRemoveFavoriteMutation, useAddHistoryEntryMutation } from "../../../core/api/apiSlice";
 import type { Property } from "@workspace/api-zod";
+import AnimatedPressable from "../../../shared/components/AnimatedPressable";
 
 function formatPrice(price: number): string {
   return `${new Intl.NumberFormat("fr-FR").format(price)} DA`;
@@ -40,7 +41,7 @@ export default function PropertyCard({
 
   return (
     <View style={styles.card}>
-      <TouchableOpacity activeOpacity={0.9} onPress={onPress}>
+      <AnimatedPressable onPress={onPress}>
         <View style={styles.imageWrapper}>
           {photo ? (
             <Image source={{ uri: photo }} style={styles.image} />
@@ -83,7 +84,7 @@ export default function PropertyCard({
             </View>
           </View>
         </View>
-      </TouchableOpacity>
+      </AnimatedPressable>
 
       <TouchableOpacity style={styles.favoriteButton} onPress={handleToggleFavorite} activeOpacity={0.8}>
         <Ionicons

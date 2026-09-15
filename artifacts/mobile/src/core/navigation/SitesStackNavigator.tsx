@@ -13,7 +13,7 @@ const Stack = createNativeStackNavigator<SitesStackParamList>();
 
 export default function SitesStackNavigator() {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Navigator screenOptions={{ headerShown: false, animation: "slide_from_right" }}>
       <Stack.Screen name="SitesList" component={SitesScreen} />
       <Stack.Screen name="SiteDetail" component={SiteDetailScreen} />
       <Stack.Screen name="PropertyDetail" component={PropertyDetailScreen} />

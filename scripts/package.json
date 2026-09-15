@@ -7,6 +7,8 @@
     "hello": "tsx ./src/hello.ts",
     "seed-sites": "tsx ./src/seed-sites.ts",
     "seed-tourism": "tsx ./src/seed-tourism.ts",
+    "clear-data": "tsx ./src/clear-data.ts",
+    "seed-tourism-full": "tsx ./src/seed-tourism-full.ts",
     "seed-admin": "tsx ./src/seed-admin.ts",
     "test-connection": "tsx ./src/test-connection.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit"

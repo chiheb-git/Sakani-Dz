@@ -31,4 +31,16 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/api", router);
 
+// Never expose database errors, SQL statements, stack traces, or configuration
+// details to API consumers.  Express otherwise renders its development error
+// page for rejected async route handlers.
+app.use((error: unknown, _req: express.Request, res: express.Response, next: express.NextFunction) => {
+  logger.error({ error }, "Unhandled API error");
+  if (res.headersSent) {
+    next(error);
+    return;
+  }
+  res.status(500).json({ error: "Internal server error" });
+});
+
 export default app;
