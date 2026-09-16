@@ -1,4 +1,4 @@
-﻿# ============================================================================
+# ============================================================================
 # SECURITY: Minimum release age for npm packages (supply-chain attack defense)
 # ============================================================================
 #
@@ -34,8 +34,12 @@ minimumReleaseAgeExclude:
   - '@replit/*'
   - stripe-replit-sync
   - expo-constants@57.0.8
-  - expo-location@57.0.7
-  - expo-notifications@57.0.8
+  - expo-location@57.0.7 || 57.0.18
+  - expo-notifications@57.0.8 || 57.0.19
+  - '@expo/cli@57.0.25'
+  - '@expo/router-server@57.0.10'
+  - babel-preset-expo@57.0.12
+  - expo@57.0.23
 
 packages:
   - artifacts/*

@@ -1,49 +1,51 @@
 {
-    "expo":  {
-                 "name":  "Sakani Dz",
-                 "slug":  "sakani-dz",
-                 "scheme":  "sakanidz",
-                 "version":  "1.0.0",
-                 "orientation":  "portrait",
-                 "icon":  "./assets/icon.png",
-                 "userInterfaceStyle":  "light",
-                 "ios":  {
-                             "supportsTablet":  true
-                         },
-                 "android":  {
-                                 "adaptiveIcon":  {
-                                                      "backgroundColor":  "#E6F4FE",
-                                                      "foregroundImage":  "./assets/android-icon-foreground.png",
-                                                      "backgroundImage":  "./assets/android-icon-background.png",
-                                                      "monochromeImage":  "./assets/android-icon-monochrome.png"
-                                                  },
-                                 "predictiveBackGestureEnabled":  false,
-                                 "package":  "com.sakanidz.app"
-                             },
-                 "web":  {
-                             "favicon":  "./assets/favicon.png"
-                         },
-                 "splash":  {
-                                "image":  "./assets/splash-icon.png",
-                                "resizeMode":  "contain",
-                                "backgroundColor":  "#0f2a43"
-                            },
-                 "plugins":  [
-                                 "expo-sqlite",
-                                 "expo-secure-store",
-                                 "expo-font",
-                                 "expo-notifications"
-                             ],
-                 "permissions":  [
-                                     "NOTIFICATIONS",
-                                     "ACCESS_FINE_LOCATION",
-                                     "ACCESS_COARSE_LOCATION",
-                                     "CAMERA"
-                                 ],
-                 "extra":  {
-                               "eas":  {
-                                           "projectId":  "223b48dd-9aa7-4569-8b4f-4e550096a3f7"
-                                       }
-                           }
-             }
+  "expo": {
+    "name": "Sakani Dz",
+    "slug": "sakani-dz",
+    "scheme": "sakanidz",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false,
+      "package": "com.sakanidz.app"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0f2a43"
+    },
+    "plugins": [
+      "expo-sqlite",
+      "expo-secure-store",
+      "expo-font",
+      "expo-notifications",
+      "expo-localization",
+      "expo-video"
+    ],
+    "permissions": [
+      "NOTIFICATIONS",
+      "ACCESS_FINE_LOCATION",
+      "ACCESS_COARSE_LOCATION",
+      "CAMERA"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "223b48dd-9aa7-4569-8b4f-4e550096a3f7"
+      }
+    }
+  }
 }
