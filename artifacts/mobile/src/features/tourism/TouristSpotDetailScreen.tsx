@@ -1,4 +1,4 @@
-﻿import { useRoute, useNavigation } from "@react-navigation/native";
+import { useRoute, useNavigation } from "@react-navigation/native";
 import { useState } from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity, Linking, ActivityIndicator, Dimensions, ScrollView } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
@@ -15,6 +15,7 @@ export default function TouristSpotDetailScreen() {
   const { data: spot, isLoading } = useGetTouristSpotQuery(spotId);
   useRecordHistory({ touristSpotId: spotId });
   const screenWidth = Dimensions.get("window").width;
+  const [imageFailed, setImageFailed] = useState(false);
 
   if (isLoading || !spot) {
     return (
@@ -22,7 +23,6 @@ export default function TouristSpotDetailScreen() {
     );
   }
 
-  const [imageFailed, setImageFailed] = useState(false);
   const photo = spot.photos?.[0];
   const imageUri = photo && !imageFailed ? photo : null;
 
