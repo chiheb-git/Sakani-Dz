@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, Modal, SafeAreaView } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { colors, spacing, radius, typography } from "../theme/theme";
@@ -113,9 +113,11 @@ const styles = StyleSheet.create({
     marginRight: spacing.sm,
   },
   wilayaList: {
+    flex: 1,
     flexGrow: 0,
     paddingRight: spacing.md,
   },
+  wilayaRowInner: {},
   wilayaChip: {
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,

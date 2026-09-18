@@ -34,6 +34,7 @@ export async function getStoredLanguage(): Promise<SupportedLanguage> {
 
 export async function setStoredLanguage(language: SupportedLanguage): Promise<void> {
   await AsyncStorage.setItem(LANGUAGE_STORAGE_KEY, language);
+  await i18next.changeLanguage(language);
   I18nManager.allowRTL(language === 'ar');
   I18nManager.forceRTL(language === 'ar');
 }

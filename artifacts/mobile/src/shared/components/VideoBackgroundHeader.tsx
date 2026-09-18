@@ -55,7 +55,7 @@ export default function VideoBackgroundHeader({
 }
 
 const styles = StyleSheet.create({
-  container: { backgroundColor: colors.primary, overflow: "hidden" },
+  container: { backgroundColor: colors.primary, overflow: "hidden", minHeight: 180 },
   overlay: {
     ...StyleSheet.absoluteFill,
     backgroundColor: "rgba(4, 21, 36, 0.42)",

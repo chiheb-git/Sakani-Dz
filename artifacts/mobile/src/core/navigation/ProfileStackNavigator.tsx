@@ -1,4 +1,5 @@
 ﻿import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import ProfileScreen from "../../features/profile/ProfileScreen";
 import LanguageSelectionScreen from "../../features/profile/LanguageSelectionScreen";
 import PrivacyPolicyScreen from "../../features/legal/PrivacyPolicyScreen";
@@ -7,6 +8,7 @@ import VendorLoginScreen from "../../features/vendor/VendorLoginScreen";
 import VendorForgotPasswordScreen from "../../features/vendor/VendorForgotPasswordScreen";
 import VendorDashboardScreen from "../../features/vendor/VendorDashboardScreen";
 import VendorPropertyFormScreen from "../../features/vendor/VendorPropertyFormScreen";
+import { setStoredLanguage, type SupportedLanguage } from "../i18n";
 
 export type ProfileStackParamList = {
   ProfileHome: undefined;
@@ -21,11 +23,21 @@ export type ProfileStackParamList = {
 
 const Stack = createNativeStackNavigator<ProfileStackParamList>();
 
+function LanguageSelectionScreenWrapper({
+  navigation,
+}: NativeStackScreenProps<ProfileStackParamList, "LanguageSelection">) {
+  const handleSelect = async (language: SupportedLanguage) => {
+    await setStoredLanguage(language);
+    navigation.goBack();
+  };
+  return <LanguageSelectionScreen onSelect={handleSelect} />;
+}
+
 export default function ProfileStackNavigator() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false, animation: "slide_from_right" }}>
       <Stack.Screen name="ProfileHome" component={ProfileScreen} />
-      <Stack.Screen name="LanguageSelection" component={LanguageSelectionScreen} />
+      <Stack.Screen name="LanguageSelection" component={LanguageSelectionScreenWrapper} />
       <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} />
       <Stack.Screen name="VendorRegister" component={VendorRegisterScreen} />
       <Stack.Screen name="VendorLogin" component={VendorLoginScreen} />
