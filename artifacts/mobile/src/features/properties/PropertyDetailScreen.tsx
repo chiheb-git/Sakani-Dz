@@ -1,4 +1,5 @@
 ﻿import { useRoute, useNavigation } from "@react-navigation/native";
+import { useTranslation } from "react-i18next";
 import {
   View,
   Text,
@@ -21,6 +22,7 @@ function formatPrice(price: number): string {
 }
 
 export default function PropertyDetailScreen() {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const route = useRoute<any>();
   const { propertyId } = route.params;
@@ -105,20 +107,20 @@ export default function PropertyDetailScreen() {
 
           <View style={[styles.statusPill, property.status !== "available" && styles.statusPillRented]}>
             <Text style={styles.statusText}>
-              {property.status === "available" ? "Disponible" : "Loué"}
+              {property.status === "available" ? t("properties.available") : t("properties.rented")}
             </Text>
           </View>
 
           {property.description ? (
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Description</Text>
+              <Text style={styles.sectionTitle}>{t("properties.description")}</Text>
               <Text style={styles.description}>{property.description}</Text>
             </View>
           ) : null}
 
           {property.equipment && property.equipment.length > 0 ? (
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Équipements</Text>
+              <Text style={styles.sectionTitle}>{t("properties.equipment")}</Text>
               <View style={styles.equipmentGrid}>
                 {property.equipment.map((item, index) => (
                   <View key={index} style={styles.equipmentChip}>
@@ -132,10 +134,10 @@ export default function PropertyDetailScreen() {
 
           {property.latitude != null && property.longitude != null ? (
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Localisation</Text>
+              <Text style={styles.sectionTitle}>{t("properties.localisation")}</Text>
               <TouchableOpacity style={styles.mapCard} onPress={handleMap} activeOpacity={0.85}>
                 <Ionicons name="map" size={28} color={colors.primary} />
-                <Text style={styles.mapCardText}>Voir sur la carte</Text>
+                <Text style={styles.mapCardText}>{t("properties.map")}</Text>
                 <Ionicons name="open-outline" size={18} color={colors.textSecondary} />
               </TouchableOpacity>
             </View>
@@ -143,7 +145,7 @@ export default function PropertyDetailScreen() {
 
           {vendor ? (
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Vendeur</Text>
+              <Text style={styles.sectionTitle}>{t("properties.vendor")}</Text>
               <View style={styles.vendorCard}>
                 <View style={styles.vendorAvatar}>
                   <Ionicons name="person" size={22} color={colors.primary} />
@@ -155,7 +157,7 @@ export default function PropertyDetailScreen() {
                   {vendor.isVerified ? (
                     <View style={styles.verifiedRow}>
                       <Ionicons name="checkmark-circle" size={13} color={colors.success} />
-                      <Text style={styles.verifiedText}>Vendeur vérifié</Text>
+                      <Text style={styles.verifiedText}>{t("properties.verified")}</Text>
                     </View>
                   ) : null}
                 </View>
@@ -169,11 +171,11 @@ export default function PropertyDetailScreen() {
         <View style={styles.footer}>
           <TouchableOpacity style={[styles.footerButton, styles.callButton]} onPress={handleCall}>
             <Ionicons name="call" size={20} color="#fff" />
-            <Text style={styles.footerButtonText}>Appeler</Text>
+            <Text style={styles.footerButtonText}>{t("properties.call")}</Text>
           </TouchableOpacity>
           <TouchableOpacity style={[styles.footerButton, styles.whatsappButton]} onPress={handleWhatsApp}>
             <Ionicons name="logo-whatsapp" size={20} color="#fff" />
-            <Text style={styles.footerButtonText}>WhatsApp</Text>
+            <Text style={styles.footerButtonText}>{t("properties.whatsapp")}</Text>
           </TouchableOpacity>
         </View>
       ) : null}

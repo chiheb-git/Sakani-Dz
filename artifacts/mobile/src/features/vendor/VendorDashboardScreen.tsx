@@ -1,4 +1,5 @@
 ﻿import { View, Text, StyleSheet, TouchableOpacity, FlatList } from "react-native";
+import { useTranslation } from "react-i18next";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
@@ -25,6 +26,7 @@ const STATUS_LABELS: Record<string, { label: string; color: string }> = {
 };
 
 export default function VendorDashboardScreen() {
+  const { t } = useTranslation();
   const navigation = useNavigation<any>();
   const dispatch = useDispatch();
 
@@ -45,6 +47,13 @@ export default function VendorDashboardScreen() {
     );
   }
 
+  const statusKeys: Record<string, string> = {
+    pending: "vendor.statusPending",
+    active: "vendor.statusActive",
+    renewal_required: "vendor.statusRenewal",
+    blocked: "vendor.statusBlocked",
+    rejected: "vendor.statusRejected",
+  };
   const statusInfo = STATUS_LABELS[vendor.status] ?? { label: vendor.status, color: colors.textMuted };
 
   return (
@@ -73,10 +82,10 @@ export default function VendorDashboardScreen() {
               <View style={styles.statusCard}>
                 <View style={[styles.statusDot, { backgroundColor: statusInfo.color }]} />
                 <View style={{ flex: 1 }}>
-                  <Text style={styles.statusLabel}>{statusInfo.label}</Text>
+                  <Text style={styles.statusLabel}>{t(statusKeys[vendor.status] ?? statusInfo.label)}</Text>
                   {vendor.subscriptionExpiresAt ? (
                     <Text style={styles.statusSubtext}>
-                      Abonnement jusqu'au {formatDate(vendor.subscriptionExpiresAt)}
+                      {t("vendor.subscriptionUntil", { date: formatDate(vendor.subscriptionExpiresAt) })}
                     </Text>
                   ) : null}
                 </View>
@@ -88,19 +97,19 @@ export default function VendorDashboardScreen() {
                 <View style={styles.statsGrid}>
                   <View style={styles.statBox}>
                     <Text style={styles.statValue}>{stats.totalProperties}</Text>
-                    <Text style={styles.statLabel}>Biens</Text>
+                    <Text style={styles.statLabel}>{t("vendor.statsProperties")}</Text>
                   </View>
                   <View style={styles.statBox}>
                     <Text style={styles.statValue}>{stats.totalViews}</Text>
-                    <Text style={styles.statLabel}>Vues</Text>
+                    <Text style={styles.statLabel}>{t("vendor.statsViews")}</Text>
                   </View>
                   <View style={styles.statBox}>
                     <Text style={styles.statValue}>{stats.availableProperties}</Text>
-                    <Text style={styles.statLabel}>Disponibles</Text>
+                    <Text style={styles.statLabel}>{t("vendor.statsAvailable")}</Text>
                   </View>
                   <View style={styles.statBox}>
                     <Text style={styles.statValue}>{stats.totalSites}</Text>
-                    <Text style={styles.statLabel}>Sites</Text>
+                    <Text style={styles.statLabel}>{t("vendor.statsSites")}</Text>
                   </View>
                 </View>
               ) : null}
@@ -111,7 +120,7 @@ export default function VendorDashboardScreen() {
                 onPress={() => navigation.navigate("VendorPropertyForm")}
               >
                 <Ionicons name="add-circle" size={20} color="#fff" />
-                <Text style={styles.addButtonText}>Ajouter un bien</Text>
+                <Text style={styles.addButtonText}>{t("vendor.addProperty")}</Text>
               </TouchableOpacity>
 
               <Text style={styles.sectionTitle}>Mes biens ({properties.length})</Text>
@@ -124,7 +133,7 @@ export default function VendorDashboardScreen() {
           ) : (
             <View style={styles.emptyState}>
               <Ionicons name="home" size={36} color={colors.textMuted} />
-              <Text style={styles.emptyText}>Aucun bien publié pour le moment</Text>
+              <Text style={styles.emptyText}>{t("vendor.emptyProperties")}</Text>
             </View>
           )
         }

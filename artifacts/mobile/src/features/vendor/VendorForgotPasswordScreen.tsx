@@ -1,4 +1,5 @@
 ﻿import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
@@ -8,24 +9,25 @@ import VideoBackgroundHeader from "../../shared/components/VideoBackgroundHeader
 import AnimatedPressable from "../../shared/components/AnimatedPressable";
 
 export default function VendorForgotPasswordScreen() {
+  const { t } = useTranslation();
   const navigation = useNavigation<any>();
   const [forgotPassword, { isLoading }] = useVendorForgotPasswordMutation();
   const [code, setCode] = useState("");
 
   const handleSubmit = async () => {
     if (!code.trim()) {
-      Alert.alert("Champ manquant", "Merci de saisir votre code vendeur.");
+      Alert.alert(t("vendor.error"), t("vendor.missingCode"));
       return;
     }
     try {
       await forgotPassword({ code: code.trim() }).unwrap();
       Alert.alert(
-        "Demande envoyée",
-        "Votre demande de réinitialisation a été transmise. Contactez l'administrateur pour récupérer votre nouveau mot de passe.",
+        t("vendor.submitSuccessTitle"),
+        t("vendor.forgotSuccess"),
         [{ text: "OK", onPress: () => navigation.goBack() }],
       );
     } catch {
-      Alert.alert("Erreur", "Code vendeur introuvable.");
+      Alert.alert(t("vendor.error"), t("vendor.codeNotFound"));
     }
   };
 
@@ -36,22 +38,22 @@ export default function VendorForgotPasswordScreen() {
         <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={22} color="#fff" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Mot de passe oublié</Text>
-        <Text style={styles.headerSubtitle}>Saisissez votre code vendeur pour réinitialiser</Text>
+        <Text style={styles.headerTitle}>{t("vendor.forgotTitle")}</Text>
+        <Text style={styles.headerSubtitle}>{t("vendor.forgotSubtitle")}</Text>
       </View>
       </VideoBackgroundHeader>
 
       <View style={styles.content}>
         <TextInput
           style={styles.input}
-          placeholder="Code vendeur"
+          placeholder={t("vendor.codePlaceholder")}
           value={code}
           onChangeText={setCode}
           autoCapitalize="characters"
           placeholderTextColor={colors.textMuted}
         />
         <AnimatedPressable style={styles.submitButton} onPress={handleSubmit} disabled={isLoading}>
-          {isLoading ? <ActivityIndicator color="#fff" /> : <Text style={styles.submitButtonText}>Envoyer la demande</Text>}
+          {isLoading ? <ActivityIndicator color="#fff" /> : <Text style={styles.submitButtonText}>{t("vendor.forgotSubmit")}</Text>}
         </AnimatedPressable>
       </View>
     </View>

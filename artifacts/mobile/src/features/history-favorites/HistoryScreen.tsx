@@ -1,4 +1,5 @@
 ﻿import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { View, Text, SectionList, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
@@ -18,8 +19,8 @@ function formatDateLabel(dateStr: string): string {
   const isSameDay = (a: Date, b: Date) =>
     a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
 
-  if (isSameDay(date, today)) return "Aujourd'hui";
-  if (isSameDay(date, yesterday)) return "Hier";
+  if (isSameDay(date, today)) return "common.today";
+  if (isSameDay(date, yesterday)) return "common.yesterday";
   return date.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
 }
 
@@ -28,6 +29,7 @@ function formatPrice(price: number): string {
 }
 
 export default function HistoryScreen() {
+  const { t } = useTranslation();
   const navigation = useNavigation<any>();
   const { data, isLoading } = useListHistoryQuery();
   const [removeHistoryEntry] = useRemoveHistoryEntryMutation();
@@ -55,8 +57,8 @@ export default function HistoryScreen() {
     <View style={styles.container}>
       <VideoBackgroundHeader>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Historique</Text>
-        <Text style={styles.headerSubtitle}>Vos biens et lieux consultés récemment</Text>
+        <Text style={styles.headerTitle}>{t("history.title")}</Text>
+        <Text style={styles.headerSubtitle}>{t("history.subtitle")}</Text>
       </View>
       </VideoBackgroundHeader>
 
@@ -65,7 +67,7 @@ export default function HistoryScreen() {
       ) : entries.length === 0 ? (
         <View style={styles.centerFill}>
           <Ionicons name="time" size={40} color={colors.textMuted} />
-          <Text style={styles.emptyText}>Aucun historique pour le moment</Text>
+          <Text style={styles.emptyText}>{t("history.empty")}</Text>
         </View>
       ) : (
         <SectionList
@@ -73,7 +75,7 @@ export default function HistoryScreen() {
           keyExtractor={(item) => String(item.id)}
           contentContainerStyle={{ paddingTop: spacing.md, paddingBottom: spacing.xl }}
           renderSectionHeader={({ section: { title } }) => (
-            <Text style={styles.sectionHeader}>{title}</Text>
+            <Text style={styles.sectionHeader}>{title.startsWith("common.") ? t(title) : title}</Text>
           )}
           renderItem={({ item }) => {
             const isProperty = item.entryType === "property";
@@ -107,10 +109,10 @@ export default function HistoryScreen() {
                       size={12}
                       color={colors.textSecondary}
                     />
-                    <Text style={styles.typeLabel}>{isProperty ? "Bien" : "Lieu touristique"}</Text>
+                    <Text style={styles.typeLabel}>{isProperty ? t("history.property") : t("history.touristSpot")}</Text>
                   </View>
                   <Text style={styles.name} numberOfLines={1}>
-                    {name ?? "Élément supprimé"}
+                    {name ?? t("history.deleted")}
                   </Text>
                   {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
                 </View>

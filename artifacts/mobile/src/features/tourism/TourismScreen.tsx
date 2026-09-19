@@ -1,4 +1,5 @@
 ﻿import { useState, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { View, Text, FlatList, StyleSheet, RefreshControl } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
@@ -12,6 +13,7 @@ import FadeIn from "../../shared/components/FadeIn";
 import SkeletonCard from "../../shared/components/SkeletonCard";
 
 export default function TourismScreen() {
+  const { t } = useTranslation();
   const navigation = useNavigation<any>();
   const [selectedWilaya, setSelectedWilaya] = useState<string | null>(null);
 
@@ -27,8 +29,8 @@ export default function TourismScreen() {
     <View style={styles.container}>
       <VideoBackgroundHeader>
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>Tourisme</Text>
-          <Text style={styles.headerSubtitle}>Lieux touristiques à découvrir en Algérie</Text>
+          <Text style={styles.headerTitle}>{t("tourism.title")}</Text>
+          <Text style={styles.headerSubtitle}>{t("app.tourismSubtitle")}</Text>
         </View>
       </VideoBackgroundHeader>
 
@@ -39,7 +41,7 @@ export default function TourismScreen() {
       ) : spots.length === 0 ? (
         <View style={styles.centerFill}>
           <Ionicons name="map" size={40} color={colors.textMuted} />
-          <Text style={styles.emptyText}>Aucun lieu touristique trouvé pour ces critères</Text>
+          <Text style={styles.emptyText}>{t("tourism.empty")}</Text>
         </View>
       ) : (
         <FlatList

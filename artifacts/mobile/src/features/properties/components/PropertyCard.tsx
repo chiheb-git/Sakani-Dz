@@ -1,4 +1,5 @@
 ﻿import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+import { useTranslation } from "react-i18next";
 import { Ionicons } from "@expo/vector-icons";
 import { colors, spacing, radius, typography, shadow } from "../../../shared/theme/theme";
 import { useListFavoritesQuery, useAddFavoriteMutation, useRemoveFavoriteMutation, useAddHistoryEntryMutation } from "../../../core/api/apiSlice";
@@ -22,6 +23,7 @@ export default function PropertyCard({
   property: Property;
   onPress: () => void;
 }) {
+  const { t } = useTranslation();
   const photo = property.photos?.[0];
 
   const { data: favoritesData } = useListFavoritesQuery();
@@ -53,7 +55,7 @@ export default function PropertyCard({
           {property.isFeatured ? (
             <View style={styles.featuredBadge}>
               <Ionicons name="star" size={12} color="#fff" />
-              <Text style={styles.featuredText}>En vedette</Text>
+              <Text style={styles.featuredText}>{t("properties.featured")}</Text>
             </View>
           ) : null}
           <View style={styles.typeBadge}>
@@ -79,7 +81,7 @@ export default function PropertyCard({
           <View style={styles.footerRow}>
             <View style={styles.statusPill(property.status === "available")}>
               <Text style={styles.statusText(property.status === "available")}>
-                {property.status === "available" ? "Disponible" : "Loué"}
+                {property.status === "available" ? t("properties.available") : t("properties.rented")}
               </Text>
             </View>
           </View>

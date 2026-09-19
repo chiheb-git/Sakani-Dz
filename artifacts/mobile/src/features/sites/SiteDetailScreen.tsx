@@ -1,4 +1,5 @@
 ﻿import { useRoute, useNavigation } from "@react-navigation/native";
+import { useTranslation } from "react-i18next";
 import { View, Text, Image, StyleSheet, TouchableOpacity, ActivityIndicator, FlatList, Dimensions } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { colors, spacing, radius, typography } from "../../shared/theme/theme";
@@ -7,6 +8,7 @@ import { useGetSiteQuery, useListSitePropertiesQuery } from "../../core/api/apiS
 import PropertyCard from "../properties/components/PropertyCard";
 
 export default function SiteDetailScreen() {
+  const { t } = useTranslation();
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
   const { siteId } = route.params;
@@ -53,14 +55,14 @@ export default function SiteDetailScreen() {
                 <Text style={styles.wilaya}>{site.wilaya}</Text>
                 <View style={styles.countBadge}>
                   <Text style={styles.countText}>
-                    {site.propertyCount ?? 0} logement{(site.propertyCount ?? 0) > 1 ? "s" : ""}
+                    {site.propertyCount ?? 0} {(site.propertyCount ?? 0) > 1 ? t("sites.countPlural", { count: site.propertyCount ?? 0 }).replace(/^\d+\s*/, "") : t("sites.count", { count: site.propertyCount ?? 0 }).replace(/^\d+\s*/, "")}
                   </Text>
                 </View>
               </View>
 
               {site.description ? <Text style={styles.description}>{site.description}</Text> : null}
 
-              <Text style={styles.sectionTitle}>Logements disponibles</Text>
+              <Text style={styles.sectionTitle}>{t("sites.availableProperties")}</Text>
             </View>
           </>
         }
@@ -71,7 +73,7 @@ export default function SiteDetailScreen() {
             </View>
           ) : (
             <View style={styles.centerFillInline}>
-              <Text style={styles.emptyText}>Aucun logement dans ce site pour le moment</Text>
+              <Text style={styles.emptyText}>{t("sites.emptyDetail")}</Text>
             </View>
           )
         }

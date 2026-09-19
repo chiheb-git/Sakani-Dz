@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, Modal, SafeAreaView } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { colors, spacing, radius, typography } from "../theme/theme";
@@ -11,6 +12,7 @@ type WilayaPickerProps = {
 };
 
 export default function WilayaPicker({ selectedWilaya, onSelectWilaya, quickCount = 8 }: WilayaPickerProps) {
+  const { t } = useTranslation();
   const [modalVisible, setModalVisible] = useState(false);
   const quickWilayas = WILAYAS.slice(0, quickCount);
 
@@ -23,10 +25,10 @@ export default function WilayaPicker({ selectedWilaya, onSelectWilaya, quickCoun
       <FlatList
         horizontal
         showsHorizontalScrollIndicator={false}
-        data={[{ code: "00", name: "Toutes" }, ...quickWilayas]}
+        data={[{ code: "00", name: t("wilaya.all") }, ...quickWilayas]}
         keyExtractor={(item) => item.code}
         style={styles.wilayaList}
-        contentContainerStyle={{ gap: spacing.sm }}
+        contentContainerStyle={styles.wilayaListContent}
         renderItem={({ item }) => {
           const isAll = item.code === "00";
           const active = isAll ? selectedWilaya === null : selectedWilaya === item.name;
@@ -36,8 +38,8 @@ export default function WilayaPicker({ selectedWilaya, onSelectWilaya, quickCoun
               onPress={() => onSelectWilaya(isAll ? null : item.name)}
               activeOpacity={0.8}
             >
-              <Text style={[styles.wilayaChipText, active && styles.wilayaChipTextActive]}>
-                {isAll ? "Toutes" : `${item.code} - ${item.name}`}
+              <Text style={[styles.wilayaChipText, active && styles.wilayaChipTextActive]} numberOfLines={1}>
+                {isAll ? t("wilaya.all") : `${item.code} - ${item.name}`}
               </Text>
             </TouchableOpacity>
           );
@@ -47,7 +49,7 @@ export default function WilayaPicker({ selectedWilaya, onSelectWilaya, quickCoun
       <Modal visible={modalVisible} animationType="slide" onRequestClose={() => setModalVisible(false)}>
         <SafeAreaView style={styles.modalContainer}>
           <View style={styles.modalHeader}>
-            <Text style={styles.modalTitle}>Choisir une wilaya</Text>
+            <Text style={styles.modalTitle}>{t("wilaya.choose")}</Text>
             <TouchableOpacity onPress={() => setModalVisible(false)}>
               <Ionicons name="close" size={26} color={colors.textPrimary} />
             </TouchableOpacity>
@@ -67,7 +69,7 @@ export default function WilayaPicker({ selectedWilaya, onSelectWilaya, quickCoun
                 }}
               >
                 <Text style={[styles.modalRowText, selectedWilaya === null && styles.modalRowTextActive]}>
-                  Toutes les wilayas
+                  {t("wilaya.allLong")}
                 </Text>
               </TouchableOpacity>
             }
@@ -98,6 +100,7 @@ const styles = StyleSheet.create({
   wilayaRow: {
     flexDirection: "row",
     alignItems: "center",
+    minHeight: 44,
     marginTop: spacing.md,
     paddingLeft: spacing.md,
   },
@@ -114,10 +117,11 @@ const styles = StyleSheet.create({
   },
   wilayaList: {
     flex: 1,
-    flexGrow: 0,
+    minWidth: 0,
+    height: 44,
     paddingRight: spacing.md,
   },
-  wilayaRowInner: {},
+  wilayaListContent: { gap: spacing.sm, alignItems: "center" },
   wilayaChip: {
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,

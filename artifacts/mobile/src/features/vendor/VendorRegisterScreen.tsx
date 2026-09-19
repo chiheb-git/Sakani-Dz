@@ -1,4 +1,5 @@
 ﻿import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   View,
   Text,
@@ -23,6 +24,7 @@ type PropertyType = "apartment" | "villa" | "site";
 const APARTMENT_TYPES = ["F1", "F2", "F3", "F4", "F5"] as const;
 
 export default function VendorRegisterScreen() {
+  const { t } = useTranslation();
   const navigation = useNavigation<any>();
   const [registerVendor, { isLoading }] = useRegisterVendorMutation();
 
@@ -44,13 +46,13 @@ export default function VendorRegisterScreen() {
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
-        Alert.alert("Permission refusée", "L'accès à la position est nécessaire pour cette fonctionnalité.");
+        Alert.alert(t("vendor.permissionDenied"), t("vendor.locationPermission"));
         return;
       }
       const pos = await Location.getCurrentPositionAsync({});
       setLocation({ latitude: pos.coords.latitude, longitude: pos.coords.longitude });
     } catch {
-      Alert.alert("Erreur", "Impossible de récupérer la position actuelle.");
+      Alert.alert(t("vendor.error"), t("vendor.locationError"));
     } finally {
       setLocating(false);
     }
@@ -58,7 +60,7 @@ export default function VendorRegisterScreen() {
 
   const handleSubmit = async () => {
     if (!firstName.trim() || !lastName.trim() || !phone.trim() || !email.trim() || !wilaya) {
-      Alert.alert("Champs manquants", "Merci de remplir tous les champs obligatoires.");
+      Alert.alert(t("vendor.error"), t("vendor.missingFields"));
       return;
     }
     try {
@@ -78,12 +80,12 @@ export default function VendorRegisterScreen() {
       }).unwrap();
 
       Alert.alert(
-        "Demande envoyée",
-        "Votre inscription a été soumise. Un administrateur va l'examiner et vous recevrez un code d'accès par la suite.",
+        t("vendor.submitSuccessTitle"),
+        t("vendor.registerSuccess"),
         [{ text: "OK", onPress: () => navigation.goBack() }],
       );
     } catch {
-      Alert.alert("Erreur", "Impossible d'envoyer votre demande. Réessayez plus tard.");
+      Alert.alert(t("vendor.error"), t("vendor.submitError"));
     }
   };
 
@@ -94,29 +96,29 @@ export default function VendorRegisterScreen() {
         <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={22} color="#fff" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Devenir vendeur</Text>
-        <Text style={styles.headerSubtitle}>Rejoignez Sakani Dz et publiez vos annonces</Text>
+        <Text style={styles.headerTitle}>{t("vendor.register")}</Text>
+        <Text style={styles.headerSubtitle}>{t("vendor.registerSubtitle")}</Text>
       </View>
       </VideoBackgroundHeader>
 
       <FadeIn><ScrollView contentContainerStyle={styles.content}>
-        <Text style={styles.sectionTitle}>Informations personnelles</Text>
-        <TextInput style={styles.input} placeholder="Prénom *" value={firstName} onChangeText={setFirstName} placeholderTextColor={colors.textMuted} />
-        <TextInput style={styles.input} placeholder="Nom *" value={lastName} onChangeText={setLastName} placeholderTextColor={colors.textMuted} />
-        <TextInput style={styles.input} placeholder="Adresse" value={address} onChangeText={setAddress} placeholderTextColor={colors.textMuted} />
-        <TextInput style={styles.input} placeholder="Téléphone *" value={phone} onChangeText={setPhone} keyboardType="phone-pad" placeholderTextColor={colors.textMuted} />
-        <TextInput style={styles.input} placeholder="Email *" value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" placeholderTextColor={colors.textMuted} />
+        <Text style={styles.sectionTitle}>{t("vendor.personalInfo")}</Text>
+        <TextInput style={styles.input} placeholder={t("vendor.firstName")} value={firstName} onChangeText={setFirstName} placeholderTextColor={colors.textMuted} />
+        <TextInput style={styles.input} placeholder={t("vendor.lastName")} value={lastName} onChangeText={setLastName} placeholderTextColor={colors.textMuted} />
+        <TextInput style={styles.input} placeholder={t("vendor.address")} value={address} onChangeText={setAddress} placeholderTextColor={colors.textMuted} />
+        <TextInput style={styles.input} placeholder={t("vendor.phone")} value={phone} onChangeText={setPhone} keyboardType="phone-pad" placeholderTextColor={colors.textMuted} />
+        <TextInput style={styles.input} placeholder={t("vendor.email")} value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" placeholderTextColor={colors.textMuted} />
 
-        <Text style={styles.sectionTitle}>Type de bien</Text>
+        <Text style={styles.sectionTitle}>{t("vendor.propertyType")}</Text>
         <View style={styles.typeRow}>
-          {(["apartment", "villa", "site"] as PropertyType[]).map((t) => (
+          {(["apartment", "villa", "site"] as PropertyType[]).map((propertyTypeOption) => (
             <TouchableOpacity
-              key={t}
-              style={[styles.typeChip, propertyType === t && styles.typeChipActive]}
-              onPress={() => setPropertyType(t)}
+              key={propertyTypeOption}
+              style={[styles.typeChip, propertyType === propertyTypeOption && styles.typeChipActive]}
+              onPress={() => setPropertyType(propertyTypeOption)}
             >
-              <Text style={[styles.typeChipText, propertyType === t && styles.typeChipTextActive]}>
-                {t === "apartment" ? "Appartement" : t === "villa" ? "Villa" : "Site"}
+              <Text style={[styles.typeChipText, propertyType === propertyTypeOption && styles.typeChipTextActive]}>
+                {propertyTypeOption === "apartment" ? t("vendor.apartment") : propertyTypeOption === "villa" ? t("vendor.villa") : t("vendor.site")}
               </Text>
             </TouchableOpacity>
           ))}
@@ -124,7 +126,7 @@ export default function VendorRegisterScreen() {
 
         {propertyType === "apartment" ? (
           <>
-            <Text style={styles.label}>Type d'appartement</Text>
+            <Text style={styles.label}>{t("vendor.apartmentType")}</Text>
             <View style={styles.typeRow}>
               {APARTMENT_TYPES.map((t) => (
                 <TouchableOpacity
@@ -139,8 +141,8 @@ export default function VendorRegisterScreen() {
           </>
         ) : null}
 
-        <Text style={styles.sectionTitle}>Localisation</Text>
-        <Text style={styles.label}>Wilaya *</Text>
+        <Text style={styles.sectionTitle}>{t("vendor.location")}</Text>
+        <Text style={styles.label}>{t("vendor.wilayaRequired")}</Text>
         <WilayaPicker selectedWilaya={wilaya} onSelectWilaya={setWilaya} />
 
         <TouchableOpacity style={styles.locationButton} onPress={handleGetLocation} activeOpacity={0.85}>
@@ -150,14 +152,14 @@ export default function VendorRegisterScreen() {
             <Ionicons name="locate" size={20} color={colors.primary} />
           )}
           <Text style={styles.locationButtonText}>
-            {location ? "Position enregistrée ✓" : "Utiliser ma position actuelle"}
+            {location ? `${t("vendor.savedLocation")} ✓` : t("vendor.useLocation")}
           </Text>
         </TouchableOpacity>
 
-        <Text style={styles.sectionTitle}>Détails</Text>
+        <Text style={styles.sectionTitle}>{t("vendor.details")}</Text>
         <TextInput
           style={styles.input}
-          placeholder="Prix (DA)"
+          placeholder={t("vendor.price")}
           value={price}
           onChangeText={setPrice}
           keyboardType="numeric"
@@ -165,7 +167,7 @@ export default function VendorRegisterScreen() {
         />
         <TextInput
           style={[styles.input, styles.textArea]}
-          placeholder="Description"
+          placeholder={t("vendor.description")}
           value={description}
           onChangeText={setDescription}
           multiline
@@ -174,7 +176,7 @@ export default function VendorRegisterScreen() {
         />
 
         <AnimatedPressable style={styles.submitButton} onPress={handleSubmit} disabled={isLoading}>
-          {isLoading ? <ActivityIndicator color="#fff" /> : <Text style={styles.submitButtonText}>Envoyer ma demande</Text>}
+          {isLoading ? <ActivityIndicator color="#fff" /> : <Text style={styles.submitButtonText}>{t("vendor.submit")}</Text>}
         </AnimatedPressable>
       </ScrollView>
       </FadeIn>
@@ -218,8 +220,15 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
   },
   textArea: { height: 90, textAlignVertical: "top" },
-  typeRow: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm, marginBottom: spacing.sm },
+  typeRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    alignItems: "center",
+    gap: spacing.sm,
+    marginBottom: spacing.sm,
+  },
   typeChip: {
+    minHeight: 40,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
     borderRadius: radius.full,
@@ -228,7 +237,7 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
   },
   typeChipActive: { backgroundColor: colors.primary, borderColor: colors.primary },
-  typeChipText: { ...typography.caption, fontWeight: "600", color: colors.textSecondary },
+  typeChipText: { ...typography.caption, flexShrink: 0, fontWeight: "600", color: colors.textSecondary },
   typeChipTextActive: { color: "#fff" },
   locationButton: {
     flexDirection: "row",

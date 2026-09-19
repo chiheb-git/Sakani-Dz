@@ -1,4 +1,5 @@
 ﻿import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
@@ -13,6 +14,7 @@ import AnimatedPressable from "../../shared/components/AnimatedPressable";
 import FadeIn from "../../shared/components/FadeIn";
 
 export default function VendorLoginScreen() {
+  const { t } = useTranslation();
   const navigation = useNavigation<any>();
   const dispatch = useDispatch();
   const [loginVendor, { isLoading }] = useLoginVendorMutation();
@@ -23,7 +25,7 @@ export default function VendorLoginScreen() {
 
   const handleSubmit = async () => {
     if (!code.trim() || !password.trim()) {
-      Alert.alert("Champs manquants", "Merci de saisir votre code et votre mot de passe.");
+      Alert.alert(t("vendor.error"), t("vendor.missingFields"));
       return;
     }
     try {
@@ -34,7 +36,7 @@ export default function VendorLoginScreen() {
       if (pushToken) await registerPushToken({ token: pushToken });
       navigation.navigate("VendorDashboard");
     } catch {
-      Alert.alert("Erreur", "Code ou mot de passe incorrect.");
+      Alert.alert(t("vendor.error"), t("vendor.invalidCredentials"));
     }
   };
 
@@ -45,15 +47,15 @@ export default function VendorLoginScreen() {
         <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={22} color="#fff" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Connexion vendeur</Text>
-        <Text style={styles.headerSubtitle}>Accédez à votre espace vendeur</Text>
+        <Text style={styles.headerTitle}>{t("vendor.login")}</Text>
+        <Text style={styles.headerSubtitle}>{t("vendor.loginSubtitle")}</Text>
       </View>
       </VideoBackgroundHeader>
 
       <FadeIn style={styles.content}>
         <TextInput
           style={styles.input}
-          placeholder="Code vendeur"
+          placeholder={t("vendor.codePlaceholder")}
           value={code}
           onChangeText={setCode}
           autoCapitalize="characters"
@@ -61,7 +63,7 @@ export default function VendorLoginScreen() {
         />
         <TextInput
           style={styles.input}
-          placeholder="Mot de passe"
+          placeholder={t("vendor.passwordPlaceholder")}
           value={password}
           onChangeText={setPassword}
           secureTextEntry
@@ -69,11 +71,11 @@ export default function VendorLoginScreen() {
         />
 
         <AnimatedPressable style={styles.submitButton} onPress={handleSubmit} disabled={isLoading}>
-          {isLoading ? <ActivityIndicator color="#fff" /> : <Text style={styles.submitButtonText}>Se connecter</Text>}
+          {isLoading ? <ActivityIndicator color="#fff" /> : <Text style={styles.submitButtonText}>{t("vendor.loginButton")}</Text>}
         </AnimatedPressable>
 
         <TouchableOpacity style={styles.forgotButton} onPress={() => navigation.navigate("VendorForgotPassword")}>
-          <Text style={styles.forgotButtonText}>Mot de passe oublié ?</Text>
+          <Text style={styles.forgotButtonText}>{t("vendor.forgotPassword")}</Text>
         </TouchableOpacity>
       </FadeIn>
     </View>

@@ -1,4 +1,5 @@
 ﻿import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import {
   View,
   Text,
@@ -28,6 +29,7 @@ type PropertyType = "apartment" | "villa";
 const APARTMENT_TYPES = ["F1", "F2", "F3", "F4", "F5"] as const;
 
 export default function VendorPropertyFormScreen() {
+  const { t } = useTranslation();
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
   const propertyId: number | undefined = route.params?.propertyId;
@@ -74,7 +76,7 @@ export default function VendorPropertyFormScreen() {
 
   const handleSubmit = async () => {
     if (!description.trim() || !price.trim() || !wilaya) {
-      Alert.alert("Champs manquants", "Merci de remplir la description, le prix et la wilaya.");
+      Alert.alert(t("vendor.error"), t("vendor.requiredProperty"));
       return;
     }
     const body = {
@@ -90,28 +92,28 @@ export default function VendorPropertyFormScreen() {
     try {
       if (isEditing) {
         await updateProperty({ id: propertyId!, body }).unwrap();
-        Alert.alert("Modifié", "Le bien a été mis à jour.", [{ text: "OK", onPress: () => navigation.goBack() }]);
+        Alert.alert(t("common.ok"), t("vendor.updated"), [{ text: t("common.ok"), onPress: () => navigation.goBack() }]);
       } else {
         await createProperty(body).unwrap();
-        Alert.alert("Publié", "Le bien a été ajouté.", [{ text: "OK", onPress: () => navigation.goBack() }]);
+        Alert.alert(t("common.ok"), t("vendor.published"), [{ text: t("common.ok"), onPress: () => navigation.goBack() }]);
       }
     } catch {
-      Alert.alert("Erreur", "Impossible d'enregistrer ce bien. Réessayez.");
+      Alert.alert(t("vendor.error"), t("vendor.saveError"));
     }
   };
 
   const handleDelete = () => {
-    Alert.alert("Supprimer ce bien ?", "Cette action est irréversible.", [
-      { text: "Annuler", style: "cancel" },
+    Alert.alert(t("vendor.deleteProperty"), t("vendor.deleteConfirm"), [
+      { text: t("common.cancel"), style: "cancel" },
       {
-        text: "Supprimer",
+        text: t("common.delete"),
         style: "destructive",
         onPress: async () => {
           try {
             await deleteProperty(propertyId!).unwrap();
             navigation.goBack();
           } catch {
-            Alert.alert("Erreur", "Impossible de supprimer ce bien.");
+            Alert.alert(t("vendor.error"), t("vendor.deleteError"));
           }
         },
       },
@@ -133,21 +135,21 @@ export default function VendorPropertyFormScreen() {
         <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={22} color="#fff" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>{isEditing ? "Modifier le bien" : "Ajouter un bien"}</Text>
+        <Text style={styles.headerTitle}>{isEditing ? t("vendor.formEdit") : t("vendor.formAdd")}</Text>
       </View>
       </VideoBackgroundHeader>
 
       <FadeIn><ScrollView contentContainerStyle={styles.content}>
-        <Text style={styles.sectionTitle}>Type</Text>
+        <Text style={styles.sectionTitle}>{t("vendor.type")}</Text>
         <View style={styles.typeRow}>
-          {(["apartment", "villa"] as PropertyType[]).map((t) => (
+          {(["apartment", "villa"] as PropertyType[]).map((propertyTypeOption) => (
             <TouchableOpacity
-              key={t}
-              style={[styles.typeChip, type === t && styles.typeChipActive]}
-              onPress={() => setType(t)}
+              key={propertyTypeOption}
+              style={[styles.typeChip, type === propertyTypeOption && styles.typeChipActive]}
+              onPress={() => setType(propertyTypeOption)}
             >
-              <Text style={[styles.typeChipText, type === t && styles.typeChipTextActive]}>
-                {t === "apartment" ? "Appartement" : "Villa"}
+              <Text style={[styles.typeChipText, type === propertyTypeOption && styles.typeChipTextActive]}>
+                {propertyTypeOption === "apartment" ? t("vendor.apartment") : t("vendor.villa")}
               </Text>
             </TouchableOpacity>
           ))}
@@ -155,7 +157,7 @@ export default function VendorPropertyFormScreen() {
 
         {type === "apartment" ? (
           <>
-            <Text style={styles.label}>Type d'appartement</Text>
+            <Text style={styles.label}>{t("vendor.apartmentType")}</Text>
             <View style={styles.typeRow}>
               {APARTMENT_TYPES.map((t) => (
                 <TouchableOpacity
@@ -170,23 +172,23 @@ export default function VendorPropertyFormScreen() {
           </>
         ) : null}
 
-        <Text style={styles.sectionTitle}>Wilaya</Text>
+        <Text style={styles.sectionTitle}>{t("vendor.wilayaRequired")}</Text>
         <WilayaPicker selectedWilaya={wilaya} onSelectWilaya={setWilaya} />
 
-        <Text style={styles.sectionTitle}>Prix (DA)</Text>
+        <Text style={styles.sectionTitle}>{t("vendor.price")}</Text>
         <TextInput
           style={styles.input}
-          placeholder="Ex: 8500000"
+          placeholder={t("properties.inputPrice")}
           value={price}
           onChangeText={setPrice}
           keyboardType="numeric"
           placeholderTextColor={colors.textMuted}
         />
 
-        <Text style={styles.sectionTitle}>Description</Text>
+        <Text style={styles.sectionTitle}>{t("vendor.description")}</Text>
         <TextInput
           style={[styles.input, styles.textArea]}
-          placeholder="Décrivez le bien..."
+          placeholder={t("vendor.description")}
           value={description}
           onChangeText={setDescription}
           multiline
@@ -194,7 +196,7 @@ export default function VendorPropertyFormScreen() {
           placeholderTextColor={colors.textMuted}
         />
 
-        <Text style={styles.sectionTitle}>Statut</Text>
+        <Text style={styles.sectionTitle}>{t("properties.status")}</Text>
         <View style={styles.typeRow}>
           {(["available", "rented"] as const).map((s) => (
             <TouchableOpacity
@@ -203,17 +205,17 @@ export default function VendorPropertyFormScreen() {
               onPress={() => setStatus(s)}
             >
               <Text style={[styles.typeChipText, status === s && styles.typeChipTextActive]}>
-                {s === "available" ? "Disponible" : "Loué"}
+                {s === "available" ? t("vendor.available") : t("vendor.rented")}
               </Text>
             </TouchableOpacity>
           ))}
         </View>
 
-        <Text style={styles.sectionTitle}>Photos</Text>
+        <Text style={styles.sectionTitle}>{t("vendor.photos")}</Text>
         <View style={styles.photoInputRow}>
           <TextInput
             style={[styles.input, { flex: 1, marginBottom: 0 }]}
-            placeholder="URL de la photo"
+            placeholder={t("vendor.photoUrl")}
             value={photoUrl}
             onChangeText={setPhotoUrl}
             autoCapitalize="none"
@@ -238,7 +240,7 @@ export default function VendorPropertyFormScreen() {
           {isSubmitting ? (
             <ActivityIndicator color="#fff" />
           ) : (
-            <Text style={styles.submitButtonText}>{isEditing ? "Enregistrer les modifications" : "Publier le bien"}</Text>
+            <Text style={styles.submitButtonText}>{isEditing ? t("vendor.saveChanges") : t("vendor.publish")}</Text>
           )}
         </AnimatedPressable>
 
@@ -249,7 +251,7 @@ export default function VendorPropertyFormScreen() {
             ) : (
               <>
                 <Ionicons name="trash-outline" size={18} color={colors.danger} />
-                <Text style={styles.deleteButtonText}>Supprimer ce bien</Text>
+                <Text style={styles.deleteButtonText}>{t("vendor.deleteProperty")}</Text>
               </>
             )}
           </TouchableOpacity>
@@ -297,8 +299,9 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
   },
   textArea: { height: 90, textAlignVertical: "top" },
-  typeRow: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm, marginBottom: spacing.sm },
+  typeRow: { flexDirection: "row", flexWrap: "wrap", alignItems: "center", gap: spacing.sm, marginBottom: spacing.sm },
   typeChip: {
+    minHeight: 40,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
     borderRadius: radius.full,
@@ -307,7 +310,7 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
   },
   typeChipActive: { backgroundColor: colors.primary, borderColor: colors.primary },
-  typeChipText: { ...typography.caption, fontWeight: "600", color: colors.textSecondary },
+  typeChipText: { ...typography.caption, flexShrink: 0, fontWeight: "600", color: colors.textSecondary },
   typeChipTextActive: { color: "#fff" },
   photoInputRow: { flexDirection: "row", gap: spacing.sm, alignItems: "center" },
   addPhotoButton: {

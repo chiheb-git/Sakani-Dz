@@ -1,11 +1,13 @@
 ﻿import { View, Text, Image, StyleSheet } from "react-native";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Ionicons } from "@expo/vector-icons";
 import { colors, spacing, radius, typography, shadow } from "../../../shared/theme/theme";
 import type { TouristSpot } from "@workspace/api-zod";
 import AnimatedPressable from "../../../shared/components/AnimatedPressable";
 
 export default function TouristSpotCard({ spot, onPress }: { spot: TouristSpot; onPress: () => void }) {
+  const { t } = useTranslation();
   const [imageFailed, setImageFailed] = useState(false);
   const photo = spot.photos?.[0];
   const imageUri = photo && !imageFailed ? photo : null;
@@ -18,7 +20,7 @@ export default function TouristSpotCard({ spot, onPress }: { spot: TouristSpot; 
         ) : (
           <View style={[styles.image, styles.imagePlaceholder]}>
             <Ionicons name="map" size={36} color={colors.textMuted} />
-            <Text style={styles.imagePlaceholderText}>Photo non disponible</Text>
+            <Text style={styles.imagePlaceholderText}>{t("tourism.imageUnavailable")}</Text>
           </View>
         )}
       </View>

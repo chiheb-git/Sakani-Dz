@@ -1,4 +1,5 @@
 import { useRoute, useNavigation } from "@react-navigation/native";
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity, Linking, ActivityIndicator, Dimensions, ScrollView } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
@@ -8,6 +9,7 @@ import { useGetTouristSpotQuery } from "../../core/api/apiSlice";
 import { useRecordHistory } from "../../shared/hooks/useRecordHistory";
 
 export default function TouristSpotDetailScreen() {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const route = useRoute<any>();
   const { spotId } = route.params;
@@ -46,7 +48,7 @@ export default function TouristSpotDetailScreen() {
           ) : (
             <View style={[styles.image, styles.imagePlaceholder, { width: screenWidth }]}>
               <Ionicons name="map" size={48} color={colors.textMuted} />
-              <Text style={styles.imagePlaceholderText}>Photo non disponible</Text>
+              <Text style={styles.imagePlaceholderText}>{t("tourism.imageUnavailable")}</Text>
             </View>
           )}
           <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
@@ -63,17 +65,17 @@ export default function TouristSpotDetailScreen() {
 
           {spot.description ? (
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Description</Text>
+              <Text style={styles.sectionTitle}>{t("tourism.description")}</Text>
               <Text style={styles.description}>{spot.description}</Text>
             </View>
           ) : null}
 
           {spot.latitude != null && spot.longitude != null ? (
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Localisation</Text>
+              <Text style={styles.sectionTitle}>{t("tourism.location")}</Text>
               <TouchableOpacity style={styles.mapCard} onPress={handleMap} activeOpacity={0.85}>
                 <Ionicons name="map" size={28} color={colors.primary} />
-                <Text style={styles.mapCardText}>Voir sur la carte</Text>
+                <Text style={styles.mapCardText}>{t("tourism.map")}</Text>
                 <Ionicons name="open-outline" size={18} color={colors.textSecondary} />
               </TouchableOpacity>
             </View>
