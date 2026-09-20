@@ -5,6 +5,8 @@ import {
   Text,
   StyleSheet,
   ScrollView,
+  KeyboardAvoidingView,
+  Platform,
   TextInput,
   TouchableOpacity,
   ActivityIndicator,
@@ -101,7 +103,11 @@ export default function VendorRegisterScreen() {
       </View>
       </VideoBackgroundHeader>
 
-      <FadeIn><ScrollView contentContainerStyle={styles.content}>
+      <FadeIn><KeyboardAvoidingView
+        style={styles.formWrapper}
+        behavior={Platform.OS === "ios" ? "padding" : Platform.OS === "android" ? "height" : undefined}
+      >
+      <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
         <Text style={styles.sectionTitle}>{t("vendor.personalInfo")}</Text>
         <TextInput style={styles.input} placeholder={t("vendor.firstName")} value={firstName} onChangeText={setFirstName} placeholderTextColor={colors.textMuted} />
         <TextInput style={styles.input} placeholder={t("vendor.lastName")} value={lastName} onChangeText={setLastName} placeholderTextColor={colors.textMuted} />
@@ -179,6 +185,7 @@ export default function VendorRegisterScreen() {
           {isLoading ? <ActivityIndicator color="#fff" /> : <Text style={styles.submitButtonText}>{t("vendor.submit")}</Text>}
         </AnimatedPressable>
       </ScrollView>
+      </KeyboardAvoidingView>
       </FadeIn>
     </View>
   );
@@ -186,6 +193,7 @@ export default function VendorRegisterScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
+  formWrapper: { flex: 1 },
   header: {
     backgroundColor: "transparent",
     paddingTop: spacing.xxl,
@@ -205,7 +213,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: { ...typography.h1, color: "#fff" },
   headerSubtitle: { ...typography.body, color: "rgba(255,255,255,0.75)", marginTop: 4 },
-  content: { padding: spacing.lg, paddingBottom: spacing.xl },
+  content: { padding: spacing.lg, paddingBottom: 160 },
   sectionTitle: { ...typography.h3, color: colors.textPrimary, marginTop: spacing.lg, marginBottom: spacing.sm },
   label: { ...typography.caption, fontWeight: "600", color: colors.textSecondary, marginBottom: spacing.xs },
   input: {

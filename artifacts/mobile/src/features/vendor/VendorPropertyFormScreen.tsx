@@ -5,6 +5,8 @@ import {
   Text,
   StyleSheet,
   ScrollView,
+  KeyboardAvoidingView,
+  Platform,
   TextInput,
   TouchableOpacity,
   ActivityIndicator,
@@ -139,7 +141,11 @@ export default function VendorPropertyFormScreen() {
       </View>
       </VideoBackgroundHeader>
 
-      <FadeIn><ScrollView contentContainerStyle={styles.content}>
+      <FadeIn><KeyboardAvoidingView
+        style={styles.formWrapper}
+        behavior={Platform.OS === "ios" ? "padding" : Platform.OS === "android" ? "height" : undefined}
+      >
+      <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
         <Text style={styles.sectionTitle}>{t("vendor.type")}</Text>
         <View style={styles.typeRow}>
           {(["apartment", "villa"] as PropertyType[]).map((propertyTypeOption) => (
@@ -257,6 +263,7 @@ export default function VendorPropertyFormScreen() {
           </TouchableOpacity>
         ) : null}
       </ScrollView>
+      </KeyboardAvoidingView>
       </FadeIn>
     </View>
   );
@@ -264,6 +271,7 @@ export default function VendorPropertyFormScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
+  formWrapper: { flex: 1 },
   centerFill: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: colors.background },
   loading: { flex: 1, justifyContent: "center", backgroundColor: colors.background },
   header: {
@@ -284,7 +292,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
   },
   headerTitle: { ...typography.h1, color: "#fff" },
-  content: { padding: spacing.lg, paddingBottom: spacing.xl },
+  content: { padding: spacing.lg, paddingBottom: 160 },
   sectionTitle: { ...typography.h3, color: colors.textPrimary, marginTop: spacing.lg, marginBottom: spacing.sm },
   label: { ...typography.caption, fontWeight: "600", color: colors.textSecondary, marginBottom: spacing.xs },
   input: {
