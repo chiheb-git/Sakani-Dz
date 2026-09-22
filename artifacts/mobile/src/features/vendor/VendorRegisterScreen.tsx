@@ -103,7 +103,7 @@ export default function VendorRegisterScreen() {
       </View>
       </VideoBackgroundHeader>
 
-      <FadeIn><KeyboardAvoidingView
+      <FadeIn style={styles.formFade}><KeyboardAvoidingView
         style={styles.formWrapper}
         behavior={Platform.OS === "ios" ? "padding" : Platform.OS === "android" ? "height" : undefined}
       >
@@ -193,6 +193,7 @@ export default function VendorRegisterScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
+  formFade: { flex: 1 },
   formWrapper: { flex: 1 },
   header: {
     backgroundColor: "transparent",

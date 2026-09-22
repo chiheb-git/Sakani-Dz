@@ -141,7 +141,7 @@ export default function VendorPropertyFormScreen() {
       </View>
       </VideoBackgroundHeader>
 
-      <FadeIn><KeyboardAvoidingView
+      <FadeIn style={styles.formFade}><KeyboardAvoidingView
         style={styles.formWrapper}
         behavior={Platform.OS === "ios" ? "padding" : Platform.OS === "android" ? "height" : undefined}
       >
@@ -271,6 +271,7 @@ export default function VendorPropertyFormScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
+  formFade: { flex: 1 },
   formWrapper: { flex: 1 },
   centerFill: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: colors.background },
   loading: { flex: 1, justifyContent: "center", backgroundColor: colors.background },
